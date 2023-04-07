@@ -1,8 +1,8 @@
 #import "template.typ": *
 #show: ieee.with(
-  title: "2i2i.io the infobox",
+  title: "FairInbox",
   abstract: [
-    The _infobox_ is a generalization of the _inbox_. An _outputing_ _entity_ sends _info_ to an _inputting_ _entity_ with _coin_s attached, which signify social importance. The coins represent an arbitrary bundle of energy or information. The infobox is ordered according to social importance following the theory of <2i2i>, which incorporates _coin_s of both _objective_ as well _subjective_ values _fair_ ly. 
+    The _FairInbox_ is a generalization of the _inbox_. An _outputing_ _entity_ sends _info_ to an _inputting_ _entity_ with _currency_s attached, which signifies importance. The currency represents an arbitrary bundle of energy and information. The FairInbox is ordered according to importance following the theory of <2i2i>, which incorporates _currencies_ of both _objective_ as well as _subjective_ values _fair_ ly. 
   ],
   authors: (
     (
@@ -28,6 +28,36 @@
 
 
 = Definitions
+
+parameters
+mutable description
+mutable public encrypt key
+
+bid
+bidder
+parent
+payload (v2 encrypted)
+currency
+
+
+algorand bid = Box
+bidder = addres [36 bytes]
+parent = txn id [32 bytes]
+payload (v2 encrypted) = notes [1k bytes max per note] [max 31 notes via txns]
+currency(FX[2*8 bytes], time[8 bytes], quantity[8 bytes], ccy[8 bytes])
+
+
+== View of others' FairInbox
+
+as long as the DLT is public, so is any FairInbox. the content of a bid/msg will be encrypted using public key cryptography, which is run off-DLT (WASM runtime from IPFS via IPNS)
+so might as well provide a nice view of everyone's Fair (short for FairInbox)
+
+Fair
+what happens when information is maximized
+also shorthand for this entire project
+
+
+
 = SmartTreasury
 = FairVesting
 = Tokenized Time
