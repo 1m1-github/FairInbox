@@ -3,7 +3,9 @@ package main
 import (
 	// "crypto/ed25519"
 	"bytes"
-	"crypto/sha512"
+	// "crypto/sha512"
+	// "io"
+
 	// "crypto/sha512"
 	"fmt"
 	"strconv"
@@ -25,7 +27,32 @@ import (
 	"encoding/json"
 
 	"github.com/algorand/go-algorand-sdk/v2/client/v2/indexer"
+
+	// "golang.org/x/crypto/openpgp/elgamal"
+	crypto_rand "crypto/rand"
+
+	"golang.org/x/crypto/nacl/box"
 )
+
+func main() {
+	encoding_decoding()
+}
+
+func encryption() {
+	senderPublicKey, senderPrivateKey, _ := box.GenerateKey(crypto_rand.Reader)
+	fmt.Println(senderPublicKey)
+	fmt.Println(senderPrivateKey)
+
+	fmt.Println(base64.StdEncoding.EncodeToString(senderPublicKey[:]))
+	fmt.Println(base64.StdEncoding.EncodeToString(senderPrivateKey[:]))
+
+	// var nonce [24]byte
+	// io.ReadFull(crypto_rand.Reader, nonce[:])
+
+	// msg := []byte("Alas, poor Yorick! I knew him, Horatio")
+	// encrypted := box.Seal(nonce[:], msg, &nonce, recipientPublicKey, senderPrivateKey)
+
+}
 
 func printlog(txid string) {
 	var indexerAddress = "https://algoindexer.testnet.algoexplorerapi.io/"
@@ -77,7 +104,7 @@ func parseAppArgs(appArgsString string) (appArgs [][]byte, err error) {
 	return resp, err
 }
 
-func main() {
+func encoding_decoding() {
 	// printlog("CVFCGRZTNV46GQR7GVJBECHTNF35M2C2CS6Z27JVYH5KXIY74WWA")
 
 	// algodClient, _ := algod.MakeClient(
@@ -101,7 +128,9 @@ func main() {
 	// // fmt.Println(a2)
 
 	// // a3, _ := base64.StdEncoding.DecodeString("YQ==")
-	fmt.Println(base64.StdEncoding.DecodeString("PBjDGLtSYvmTNfGUafntgkObUCiDDm5cNTBRXRNV4uzodyoYAsLQK1NjPfApc60bSFyLLOMEoSoA2NZlZI4sIwAAAAAAn5c9AAAAAAAAAAFoZWxsbyB3b3JsZA=="))
+	a, _ := base64.StdEncoding.DecodeString("6HcqGALC0CtTYz3wKXOtG0hciyzjBKEqANjWZWSOLCM=")
+	fmt.Println(a)
+	fmt.Println(base32.StdEncoding.EncodeToString(a))
 	// // fmt.Println(a3)
 
 	// c, _ := parseAppArgs("b64:PBjDGLtSYvmTNfGUafntgkObUCiDDm5cNTBRXRNV4uw1QjNTVUdBQ1lMSUNXVTNESFhZQ1M0NU5ETkVGWkNaTTRNQ0tDS1FBM0RMR0taRU9GUVI3NEhMR0VVAAAAAACflz0AAAAAAAAAAQAAAAAAAAABAAAAAAAAAAFDaGVsbG8gd29ybGQ=")
@@ -115,40 +144,40 @@ func main() {
 	// fmt.Println(d)
 
 	// address to []byte
-	a_with_checksum, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString("HQMMGGF3KJRPTEZV6GKGT6PNQJBZWUBIQMHG4XBVGBIV2E2V4LWOFHVEAA")
-	a := a_with_checksum[:32]
-	fmt.Println(a)
+	// a_with_checksum, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString("HQMMGGF3KJRPTEZV6GKGT6PNQJBZWUBIQMHG4XBVGBIV2E2V4LWOFHVEAA")
+	// a := a_with_checksum[:32]
+	// fmt.Println(a)
 
-	b_with_checksum, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString("5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU")
-	// b := []byte("5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU")
-	b := b_with_checksum[:32]
-	fmt.Println(b)
+	// b_with_checksum, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString("5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU")
+	// // b := []byte("5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU")
+	// b := b_with_checksum[:32]
+	// fmt.Println(b)
 
-	// int to []byte
-	curreny_id_int := 10458941
-	currency_id := make([]byte, 8)
-	binary.BigEndian.PutUint64(currency_id, uint64(curreny_id_int))
-	fmt.Println(currency_id)
+	// // int to []byte
+	// curreny_id_int := 10458941
+	// currency_id := make([]byte, 8)
+	// binary.BigEndian.PutUint64(currency_id, uint64(curreny_id_int))
+	// fmt.Println(currency_id)
 
-	curreny_amount_int := 1
-	currency_amount := make([]byte, 8)
-	binary.BigEndian.PutUint64(currency_amount, uint64(curreny_amount_int))
-	fmt.Println(currency_amount)
+	// curreny_amount_int := 1
+	// currency_amount := make([]byte, 8)
+	// binary.BigEndian.PutUint64(currency_amount, uint64(curreny_amount_int))
+	// fmt.Println(currency_amount)
 
-	note := "hello world"
-	fmt.Println([]byte(note))
-	fmt.Println(base64.StdEncoding.DecodeString("aGVsbG8gd29ybGQ="))
+	// note := "hello world"
+	// fmt.Println([]byte(note))
+	// fmt.Println(base64.StdEncoding.DecodeString("aGVsbG8gd29ybGQ="))
 
-	bid_id_prehash := append(a, b...)
-	bid_id_prehash = append(bid_id_prehash, currency_id...)
-	bid_id_prehash = append(bid_id_prehash, currency_amount...)
-	bid_id_prehash = append(bid_id_prehash, note...)
-	fmt.Println(bid_id_prehash)
+	// bid_id_prehash := append(a, b...)
+	// bid_id_prehash = append(bid_id_prehash, currency_id...)
+	// bid_id_prehash = append(bid_id_prehash, currency_amount...)
+	// bid_id_prehash = append(bid_id_prehash, note...)
+	// fmt.Println(bid_id_prehash)
 
-	bid_id := sha512.Sum512_256(bid_id_prehash)
-	fmt.Println(bid_id)
-	bid_id_b64 := base64.StdEncoding.EncodeToString(bid_id[:])
-	fmt.Println(bid_id_b64)
+	// bid_id := sha512.Sum512_256(bid_id_prehash)
+	// fmt.Println(bid_id)
+	// bid_id_b64 := base64.StdEncoding.EncodeToString(bid_id[:])
+	// fmt.Println(bid_id_b64)
 
 	// a := []byte("a")
 	// fmt.Println(a)
