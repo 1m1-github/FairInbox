@@ -6,7 +6,7 @@ Each msg comes with currency attached
 
 You receive the currency if you reply
 
-https://fairinbox.io?a=MYALGORANDADDRESS (frontend is not running yet, but soon)
+https ://fairinbox.io?a=MYALGORANDADDRESS (frontend is not running yet, but soon)
 
 ## Use
 
@@ -20,8 +20,7 @@ A -> B
 
 ## 
 
-FairInbox uses FairMarket as the DLT escrow and for the inbox ordering and FairFX as the DLT FX provider.
-For the hackathon: FairFX, FairMarket, FairInbox are all parts of this project, split into separate repos.
+FairInbox uses FairMarket(https://github.com/1m1-github/FairMarket) as the DLT escrow and for the inbox ordering and FairFX (https://github.com/1m1-github/FairFX) as the DLT FX provider.
 
 ## Innovation
 
@@ -69,7 +68,5 @@ Some parts needed for Algorand and encoding/decoding do not compile in TinyGo. R
 npx webpack
 open `dist/index.html` in browser
 
-
-## Links
-https://github.com/1m1-github/FairFX
-https://github.com/1m1-github/FairMarket
+## Stream
+Dev of the project was/is streamed best-effort: https://www.youtube.com/@1m1-yt/streams
