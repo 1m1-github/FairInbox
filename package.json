@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "dependencies": {
+    "@json-rpc-tools/utils": "^1.7.6",
+    "@perawallet/connect": "^1.2.3",
+    "@wagmi/core": "^0.10.9",
+    "@walletconnect/client": "^1.8.0",
+    "@web3modal/ethereum": "^2.3.0",
+    "@web3modal/html": "^2.3.0",
+    "algorand-walletconnect-qrcode-modal": "^1.8.0",
+    "algosdk": "^2.2.0",
+    "ethers": "^5.7.2",
+    "js-sha512": "^0.8.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.79.0",
+    "webpack-cli": "^5.0.1"
+  }
+}
