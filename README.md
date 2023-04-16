@@ -49,6 +49,9 @@ Smart contracts were written using tealish and make use of modern AVM features l
 
 Smart contracts make this dapp zero-credit-risk: send large value currency without fear.
 
+## FairEnterprise
+
+FairInbox will exist as a FairEnterprise (https://github.com/1m1-github/FairEnterprise) to give trustless and fair access to value to the community
 
 ## Frontend
 The frontend part of the dapp is work-in-progress and will be available soon.
@@ -62,7 +65,7 @@ Serverless, trustless, permissionless.
 Whitelisted user provided css will be used for dapp
 
 ## WASM
-Some parts needed for Algorand and encoding/decoding do not compile in TinyGo. Regular Go is too large. Rust or julia would be alternatives.
+Some parts needed for Algorand and encoding/decoding do not compile in TinyGo. Regular Go is too large. Rust or julia would be alternatives. tbd.
 
 ## Build
 npx webpack
