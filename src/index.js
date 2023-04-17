@@ -96,11 +96,6 @@ function handleLoadInbox() {
 }
 // handleLoadInbox()
 
-function reply(txn) {
-
-}
-
-
 // let a = "z1KSn8qwtzBsqZaN0f7JCf2frBhqhFY9v5BiJQdY+pg="
 // var b = new Uint8Array(atob(a).split("").map(function(c) {return c.charCodeAt(0); }));
 // console.log(b)

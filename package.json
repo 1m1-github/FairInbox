@@ -1,0 +1,30 @@
+{
+  "name": "fairinbox",
+  "version": "0.1.0",
+  "description": "market driven inbox",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1m1-github/FairInbox.git"
+  },
+  "keywords": [
+    "inbox",
+    "dlt",
+    "fair"
+  ],
+  "author": "1m1",
+  "bugs": {
+    "url": "https://github.com/1m1-github/FairInbox/issues"
+  },
+  "homepage": "https://github.com/1m1-github/FairInbox#readme",
+  "devDependencies": {
+    "webpack": "^5.79.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "@perawallet/connect": "^1.2.3",
+    "algosdk": "^2.2.0"
+  }
+}
