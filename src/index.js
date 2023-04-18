@@ -1,82 +1,22 @@
-import algosdk from "algosdk";
+import "./global.js"
+import "./get_bids.js"
+import { init } from "./views"
+import "./pera.js"
+
+init()
+
+// const text = 'Hello, world!';
+// const encoder = new TextEncoder();
+// const byteArray = encoder.encode(text);
+// console.log(byteArray)
+
+// import algosdk from "algosdk";
+// import {b64_to_uint8array} from "./global"
+// console.log(algosdk.encodeObj("hi"))
+// console.log(b64_to_uint8array("DE3nPpeMfDw9oia3b1/i1+4+5mtbh1wlgopyju6eWFg="))
+
 // // import "./styles.css";
-// import { PeraWalletConnect } from "@perawallet/connect";
 
-// const peraWallet = new PeraWalletConnect();
-
-// const connectButton = document.createElement("button");
-// let accountAddress = "";
-
-// document.body.appendChild(connectButton);
-// connectButton.innerHTML = "Connect to Pera Wallet";
-
-// document.addEventListener("DOMContentLoaded", reconnectSession());
-
-// connectButton.addEventListener("click", (event) => {
-//     if (accountAddress) {
-//         handleDisconnectWalletClick(event);
-//     } else {
-//         handleConnectWalletClick(event);
-//     }
-// });
-
-// function reconnectSession() {
-//     // Reconnect to the session when the component is mounted
-//     peraWallet
-//         .reconnectSession()
-//         .then((accounts) => {
-//             peraWallet.connector.on("disconnect", handleDisconnectWalletClick);
-
-//             if (accounts.length) {
-//                 accountAddress = accounts[0];
-//             }
-
-//             connectButton.innerHTML = "Disconnect";
-//         })
-//         .catch((e) => console.log(e));
-// }
-
-// function handleConnectWalletClick(event) {
-//     event.preventDefault();
-
-//     peraWallet
-//         .connect()
-//         .then((newAccounts) => {
-//             peraWallet.connector.on("disconnect", handleDisconnectWalletClick);
-
-//             accountAddress = newAccounts[0];
-
-//             connectButton.innerHTML = "Disconnect";
-
-//             console.log('accountAddress', accountAddress)
-
-//             addLoadInboxButton();
-//         })
-//         .catch((error) => {
-//             if (error?.data?.type !== "CONNECT_MODAL_CLOSED") {
-//                 console.log(error);
-//             }
-//         });
-// }
-
-// function handleDisconnectWalletClick(event) {
-//     event.preventDefault();
-
-//     peraWallet.disconnect().catch((error) => {
-//         console.log(error);
-//     });
-
-//     accountAddress = "";
-//     connectButton.innerHTML = "Connect to Pera Wallet";
-// }
-
-const baseServer = "https://testnet-idx.algonode.network";
-const port = "";
-const token = "";
-let indexerClient = new algosdk.Indexer(token, baseServer, port);
-
-
-let algodClient = new algosdk.Algodv2(token, baseServer, port);
 
 // function addLoadInboxButton() {
 //     const loadInboxButton = document.createElement("button");
@@ -89,11 +29,11 @@ let algodClient = new algosdk.Algodv2(token, baseServer, port);
 //     });
 // }
 
-let accountAddress = "5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU";
+// let accountAddress = "5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU";
 
-function handleLoadInbox() {
-    const txns = getBids(accountAddress)
-}
+// function handleLoadInbox() {
+//     const txns = getBids(accountAddress)
+// }
 // handleLoadInbox()
 
 // let a = "z1KSn8qwtzBsqZaN0f7JCf2frBhqhFY9v5BiJQdY+pg="

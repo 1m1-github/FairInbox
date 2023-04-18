@@ -5,8 +5,12 @@
 // goal app call --from $A --app-id $FAIRMARKET_APP --app-arg "str:add_data" --note $NOTE_1 --out $TXNS_DIR/note_extra_1.txn
 // BID_ID = hash($A$B$CURRENCY_ID$CURRENCY_AMOUNT$NOTE)
 
+export function send(B, currency_amount, currency_id) {
+    return create_bid(user, B, currency_amount, currency_id)
+}
+
 async function create_bid(A, B, currency_amount, currency_id) {
-    const suggestedParams = await client.getTransactionParams().do();
+    const suggestedParams = await algodClient.getTransactionParams().do();
 
     const asset_send = makeAssetTransferTxnWithSuggestedParams({
         from: A,
