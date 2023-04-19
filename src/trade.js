@@ -1,7 +1,7 @@
 // goal asset optin --account $B --assetid $CURRENCY_ID --out $TXNS_DIR/trade_optin.txn
 // goal app call --from $B --app-id $FAIRMARKET_APP --app-account $A --foreign-asset $CURRENCY_ID --app-arg "str:trade" --app-arg $BID_ID --box $BID_ID --note $NOTE_2 --out $TXNS_DIR/trade_app_call.txn --fee 3000
 
-import { bid_ins, algodClient, peraWallet } from "./global";
+import { bid_ins, algod, peraWallet } from "./global";
 
 export function reply(bid_id) {
     console.log("reply", peraWallet.isConnected)
@@ -10,7 +10,7 @@ export function reply(bid_id) {
 }
 
 async function trade(A, B, bid_id, currency_id, data) {
-    const suggestedParams = await algodClient.getTransactionParams().do();
+    const suggestedParams = await algod.getTransactionParams().do();
     
     // only needed if B not opted-in
     const optin = makeAssetTransferTxnWithSuggestedParams({
@@ -35,5 +35,5 @@ async function trade(A, B, bid_id, currency_id, data) {
     const txnArray = [app_call];
     const txnGroup = algosdk.assignGroupID(txnArray);
     const signedTxns = txnGroup.map((txn) => txn.signTxn(B.privateKey))
-    await algodClient.sendRawTransaction(signedTxns).do();
+    await algod.sendRawTransaction(signedTxns).do();
 }

@@ -1,4 +1,5 @@
-import { user, peraWallet } from "./global"
+import algosdk from "algosdk";
+import { user, peraWallet, algod } from "./global"
 import { addLoggedInView, connectButton } from "./views"
 
 export function reconnectSession() {
@@ -30,10 +31,13 @@ export function handleConnectWalletClick(event) {
             user = newAccounts[0];
 
             connectButton.innerHTML = "logout";
+            
+            run()
 
             console.log('user', user)
 
             addLoggedInView()
+
         })
         .catch((error) => {
             if (error?.data?.type !== "CONNECT_MODAL_CLOSED") {
@@ -52,4 +56,37 @@ export function handleDisconnectWalletClick(event) {
 
     user = "";
     connectButton.innerHTML = "login";
+}
+
+async function generatePaymentTxns({
+    to,
+    initiatorAddr
+}) {
+    console.log("initiatorAddr", initiatorAddr)
+    console.log("to", to)
+    const suggestedParams = await algod.getTransactionParams().do();
+
+    const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+        from: initiatorAddr,
+        to,
+        amount: 1,
+        suggestedParams
+    });
+
+    return [{ txn, signers: [initiatorAddr] }];
+}
+
+async function run() {
+    console.log("user 1", user)
+    const txGroups = await generatePaymentTxns({
+        to: "GD64YIY3TWGDMCNPP553DZPPR6LDUSFQOIJVFDPPXWEG3FVOJCCDBBHU5A",
+        initiatorAddr: user
+    });
+    console.log("user 2", user)
+    try {
+        const signedTxnGroup = await peraWallet.signTransaction([txGroups]);
+        const { txId } = await algod.sendRawTransaction(signedTxnGroup).do();
+    } catch (error) {
+        console.log("Couldn't sign payment txns", error);
+    }
 }

@@ -20,8 +20,8 @@ const baseServerIndexer = "https://testnet-idx.algonode.cloud";
 const baseServerAlgod = "https://testnet-api.algonode.cloud";
 const port = "";
 const token = "";
-export const indexerClient = new algosdk.Indexer(token, baseServerIndexer, port);
-export const algodClient = new algosdk.Algodv2(token, baseServerAlgod, port);
+export const indexer = new algosdk.Indexer(token, baseServerIndexer, port);
+export const algod = new algosdk.Algodv2(token, baseServerAlgod, port);
 
 // vars
 export let user = "";

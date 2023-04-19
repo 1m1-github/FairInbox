@@ -1,4 +1,4 @@
-import { indexerClient, algodClient, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet } from "./global"
+import { indexer, algod, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet } from "./global"
 import algosdk from "algosdk";
 
 function array_to_map(bids_array) {
@@ -15,7 +15,7 @@ export async function get_in_bids() {
     //     .searchForTransactions()
     //     .txid("QPDRSHL44EU3WMLZKUD7QLMECWJ3HNKOJYQHSEPJIHLUVYN3CG6Q")
     //     .do();
-    const transactionInfo = await indexerClient
+    const transactionInfo = await indexer
         .searchForTransactions()
         .minRound(29186779)
         .applicationID(FAIRMARKET_APP)
@@ -29,7 +29,7 @@ export async function get_in_bids() {
 }
 
 export async function get_out_bids() {
-    const transactionInfo = await indexerClient
+    const transactionInfo = await indexer
         .searchForTransactions()
         .minRound(29186779)
         .applicationID(FAIRMARKET_APP)
@@ -69,7 +69,7 @@ async function bid_from_txn(txn) {
     const bid_id_uint8 = new Uint8Array(atob(bid_id).split("").map(function (c) { return c.charCodeAt(0); }));
     console.log("bid_id_uint8", bid_id_uint8)
 
-    const boxResponse = await algodClient.getApplicationBoxByName(FAIRMARKET_APP, bid_id_uint8).do();
+    const boxResponse = await algod.getApplicationBoxByName(FAIRMARKET_APP, bid_id_uint8).do();
     const bid_uint8 = boxResponse.value;
     console.log("bid_uint8", bid_uint8)
 
