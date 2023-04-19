@@ -1,4 +1,4 @@
-import { indexerClient, algodClient, FAIRMARKET_APP, user, bid_ins, bid_outs } from "./global"
+import { indexerClient, algodClient, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet } from "./global"
 import algosdk from "algosdk";
 
 function array_to_map(bids_array) {
@@ -10,6 +10,7 @@ function array_to_map(bids_array) {
 }
 
 export async function get_in_bids() {
+    console.log("get_in_bids", peraWallet.isConnected)
         // const transactionInfo = await indexerClient
     //     .searchForTransactions()
     //     .txid("QPDRSHL44EU3WMLZKUD7QLMECWJ3HNKOJYQHSEPJIHLUVYN3CG6Q")

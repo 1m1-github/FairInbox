@@ -1,5 +1,5 @@
 import { reconnectSession, handleConnectWalletClick, handleDisconnectWalletClick } from "./pera.js"
-import { user } from "./global.js"
+import { user, peraWallet } from "./global.js"
 import { get_in_bids, get_out_bids } from "./get_bids.js"
 import { cancel } from "./cancel_bid.js"
 import { reply } from "./trade.js"
@@ -36,6 +36,7 @@ export function addCreateBidButton() {
     document.body.appendChild(button);
     button.innerHTML = "send"
     button.addEventListener("click", (event) => {
+        console.log("addCreateBidButton", peraWallet.isConnected)
         if (!user) return
         let B = "5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU"
         let currency_amount = 2
@@ -56,11 +57,13 @@ function addIOButton(name, reload_f) {
     document.body.appendChild(button);
     button.innerHTML = name
     button.addEventListener("click", (event) => {
+        console.log("global", peraWallet.isConnected)
         if (!user) return
         return reload_f();
     });
 }
 async function reload(get_bids, action_name, action_f) {
+    console.log("global", peraWallet.isConnected)
     const bids_map = await get_bids();
     const bids = Object.values(bids_map)
     document.body.appendChild(document.createElement("br"))

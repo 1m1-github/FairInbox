@@ -29,6 +29,7 @@ export let bid_ins = {};
 export let bid_outs = {};
 
 export const peraWallet = new PeraWalletConnect();
+console.log("global", peraWallet.isConnected)
 
 // utils
 export const b64_to_uint8array = (a) => new Uint8Array(atob(a).split("").map(function(c) {return c.charCodeAt(0); }));

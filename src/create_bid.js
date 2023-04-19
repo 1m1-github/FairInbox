@@ -6,6 +6,7 @@
 // BID_ID = hash($A$B$CURRENCY_ID$CURRENCY_AMOUNT$NOTE)
 
 export function send(B, currency_amount, currency_id) {
+    console.log("send", peraWallet.isConnected)
     return create_bid(user, B, currency_amount, currency_id)
 }
 

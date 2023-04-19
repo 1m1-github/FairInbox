@@ -4,6 +4,7 @@ import algosdk from "algosdk";
 import { FAIRMARKET_APP, user, bid_outs, algodClient, peraWallet, b64_to_uint8array } from "./global";
 
 export function cancel(bid_id) {
+    console.log("cancel", peraWallet.isConnected)
     const bid = bid_outs[bid_id]
     return cancel_bid(user, bid_id, bid.currency_id)
 }
