@@ -33,3 +33,22 @@ console.log("global", peraWallet.isConnected)
 
 // utils
 export const b64_to_uint8array = (a) => new Uint8Array(atob(a).split("").map(function(c) {return c.charCodeAt(0); }));
+
+export function uint8ArrayToBase64(uint8Array) {
+    return new Promise((resolve, reject) => {
+        const blob = new Blob([uint8Array], { type: 'application/octet-binary' });
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            const dataUrl = event.target.result;
+            const base64 = dataUrl.split(',')[1];
+            resolve(base64);
+        };
+
+        reader.onerror = (error) => {
+            reject(error);
+        };
+
+        reader.readAsDataURL(blob);
+    });
+}

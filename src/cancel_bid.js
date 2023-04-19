@@ -32,11 +32,11 @@ async function cancel_bid(A, bid_id, currency_id) {
     console.log("txn", txn)
 
     const txns = [{ txn, signers: [A] }]
-    console.log("txns", txns)
+    // console.log("txns", txns)
 
     try {
         const signedTxn = await peraWallet.signTransaction([txns]);
-        console.log("signedTxn", signedTxn)
+        // console.log("signedTxn", signedTxn)
         const result = await algod
         .sendRawTransaction(signedTxn)
         .do();

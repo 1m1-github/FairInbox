@@ -9,6 +9,7 @@ import (
 	// "crypto/sha512"
 	"bytes"
 	"context"
+	"crypto/sha512"
 
 	// "crypto/sha512"
 
@@ -148,13 +149,13 @@ func encoding_decoding() {
 	// // fmt.Println(a2)
 
 	// // a3, _ := base64.StdEncoding.DecodeString("YQ==")
-	x, _ := base64.StdEncoding.DecodeString("z1KSn8qwtzBsqZaN0f7JCf2frBhqhFY9v5BiJQdY+pg=")
-	fmt.Println(x)
-	fmt.Println(len(x))
-	y := string(x)
-	fmt.Println(y)
+	// x, _ := base64.StdEncoding.DecodeString("z1KSn8qwtzBsqZaN0f7JCf2frBhqhFY9v5BiJQdY+pg=")
+	// fmt.Println(x)
+	// fmt.Println(len(x))
+	// y := string(x)
+	// fmt.Println(y)
 	// fmt.Println(base64.StdEncoding.EncodeToString(a[:32]))
-	fmt.Println(base32.StdEncoding.EncodeToString(x))
+	// fmt.Println(base32.StdEncoding.EncodeToString(x))
 	// // fmt.Println(a3)
 
 	// c, _ := parseAppArgs("b64:PBjDGLtSYvmTNfGUafntgkObUCiDDm5cNTBRXRNV4uw1QjNTVUdBQ1lMSUNXVTNESFhZQ1M0NU5ETkVGWkNaTTRNQ0tDS1FBM0RMR0taRU9GUVI3NEhMR0VVAAAAAACflz0AAAAAAAAAAQAAAAAAAAABAAAAAAAAAAFDaGVsbG8gd29ybGQ=")
@@ -168,47 +169,47 @@ func encoding_decoding() {
 	// fmt.Println(d)
 
 	// address to []byte
-	// a_with_checksum, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString("HQMMGGF3KJRPTEZV6GKGT6PNQJBZWUBIQMHG4XBVGBIV2E2V4LWOFHVEAA")
-	// a := a_with_checksum[:32]
-	// fmt.Println(a)
+	a_with_checksum, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString("HQMMGGF3KJRPTEZV6GKGT6PNQJBZWUBIQMHG4XBVGBIV2E2V4LWOFHVEAA")
+	a := a_with_checksum[:32]
+	fmt.Println(a)
 	// fmt.Println(base64.StdEncoding.EncodeToString(a))
 
-	// b_with_checksum, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString("5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU")
+	b_with_checksum, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString("5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU")
 	// // b := []byte("5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU")
-	// b := b_with_checksum[:32]
-	// fmt.Println(b)
+	b := b_with_checksum[:32]
+	fmt.Println(b)
 	// fmt.Println(base64.StdEncoding.EncodeToString(b))
 
 	// // // int to []byte
-	// curreny_id_int := 10458941
-	// currency_id := make([]byte, 8)
-	// binary.BigEndian.PutUint64(currency_id, uint64(curreny_id_int))
-	// fmt.Println(currency_id)
+	curreny_id_int := 10458941
+	currency_id := make([]byte, 8)
+	binary.BigEndian.PutUint64(currency_id, uint64(curreny_id_int))
+	fmt.Println(currency_id)
 	// fmt.Println(base64.StdEncoding.EncodeToString(currency_id))
 
-	// curreny_amount_int := 1
-	// currency_amount := make([]byte, 8)
-	// binary.BigEndian.PutUint64(currency_amount, uint64(curreny_amount_int))
-	// fmt.Println(currency_amount)
+	curreny_amount_int := 1
+	currency_amount := make([]byte, 8)
+	binary.BigEndian.PutUint64(currency_amount, uint64(curreny_amount_int))
+	fmt.Println(currency_amount)
 	// fmt.Println(base64.StdEncoding.EncodeToString(currency_amount))
 
-	// note := "hello world"
-	// note_bytes := []byte(note)
-	// fmt.Println(note_bytes)
+	note := "hello world"
+	note_bytes := []byte(note)
+	fmt.Println(note_bytes)
 	// // fmt.Println(base64.StdEncoding.DecodeString("aGVsbG8gd29ybGQ="))
 	// fmt.Println(base64.StdEncoding.EncodeToString(note_bytes))
 
-	// bid_id_prehash := append(a, b...)
-	// bid_id_prehash = append(bid_id_prehash, currency_id...)
-	// bid_id_prehash = append(bid_id_prehash, currency_amount...)
-	// bid_id_prehash = append(bid_id_prehash, note...)
-	// fmt.Println(bid_id_prehash)
+	bid_id_prehash := append(a, b...)
+	bid_id_prehash = append(bid_id_prehash, currency_id...)
+	bid_id_prehash = append(bid_id_prehash, currency_amount...)
+	bid_id_prehash = append(bid_id_prehash, note...)
+	fmt.Println(bid_id_prehash)
 	// fmt.Println(base64.StdEncoding.EncodeToString(bid_id_prehash))
 
-	// bid_id := sha512.Sum512_256(bid_id_prehash)
-	// fmt.Println(bid_id)
-	// bid_id_b64 := base64.StdEncoding.EncodeToString(bid_id[:])
-	// fmt.Println(bid_id_b64)
+	bid_id := sha512.Sum512_256(bid_id_prehash)
+	fmt.Println(bid_id)
+	bid_id_b64 := base64.StdEncoding.EncodeToString(bid_id[:])
+	fmt.Println(bid_id_b64)
 
 	// a := []byte("a")
 	// fmt.Println(a)

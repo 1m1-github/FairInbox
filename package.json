@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@perawallet/connect": "^1.2.3",
-    "algosdk": "^2.2.0"
+    "algosdk": "^2.2.0",
+    "js-sha512": "^0.8.0"
   }
 }

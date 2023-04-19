@@ -41,7 +41,8 @@ export function addCreateBidButton() {
         let B = "5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU"
         let currency_amount = 2
         let currency_id = 10458941
-        return send(B, currency_amount, currency_id)
+        let data = "hi"
+        return send(B, currency_id, currency_amount, data)
     });
 }
 
