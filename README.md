@@ -68,8 +68,10 @@ Whitelisted user provided css will be used for dapp
 Some parts needed for Algorand and encoding/decoding do not compile in TinyGo. Regular Go is too large. Rust or julia would be alternatives. tbd.
 
 ## Build
-npx webpack
-open `dist/index.html` in browser
+`npx webpack`
+`./node_modules/.bin/http-server -a localhost dist`
 
 ## Stream
 Dev of the project was/is streamed best-effort: https://www.youtube.com/@1m1-yt/streams
+
+
