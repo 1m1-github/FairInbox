@@ -78,7 +78,7 @@ async function bid_from_txn(txn) {
     console.log("A", A)
     console.log("B", B)
 
-    const currency_id = algosdk.bytesToBigInt(bid_uint8.slice(64, 72))
+    const currency_id = Number(algosdk.bytesToBigInt(bid_uint8.slice(64, 72)))
     console.log("currency_id", currency_id)
     const currency_amount = algosdk.bytesToBigInt(bid_uint8.slice(72, 80))
     console.log("currency_amount", currency_amount)

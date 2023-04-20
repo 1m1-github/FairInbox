@@ -35,8 +35,9 @@ async function calc_bid_id(A, B, currency_id, currency_amount, data) {
 }
 
 async function create_bid(A, B, currency_id, currency_amount, data) {
+    console.log("create_bid", A, B, currency_id, currency_amount, data)
+    
     const suggestedParams = await algod.getTransactionParams().do();
-
 
     const FX_txn = algosdk.makeApplicationCallTxnFromObject({
         from: A,
@@ -93,7 +94,6 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
 
     const txnGroupWithSigners = txnGroup.map((txn) => {return { txn: txn, signers: [A] }});
     console.log("txnGroupWithSigners", txnGroupWithSigners)
-
 
     try {
         const signedTxn = await peraWallet.signTransaction([txnGroupWithSigners]);
