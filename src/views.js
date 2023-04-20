@@ -4,6 +4,7 @@ import { get_in_bids, get_out_bids } from "./get_bids.js"
 import { cancel } from "./cancel_bid.js"
 import { reply } from "./trade.js"
 import { send } from "./create_bid.js"
+import { update_params } from "./update_params.js"
 
 export function init() {
     addLoginButton()
@@ -12,11 +13,12 @@ export function init() {
 export const connectButton = document.createElement("button");
 
 export async function addLoggedInView() {
-    await addCreateBidButton()
+    await addSendButton()
     await addInOutboxButtons()
+    await addSettingsButton()
 }
 
-// pera
+// login
 function addLoginButton() {
     document.body.appendChild(connectButton);
     connectButton.innerHTML = "login";
@@ -30,8 +32,20 @@ function addLoginButton() {
     });
 }
 
-// create bid
-export function addCreateBidButton() {
+// settings
+export function addSettingsButton() {
+    const button = document.createElement("button");
+    document.body.appendChild(button);
+    button.innerHTML = "settings"
+    button.addEventListener("click", (event) => {
+        console.log("addSettingsButton", peraWallet.isConnected)
+        if (!user) return
+        // TODO show settings and allow update
+    });
+}
+
+// send
+export function addSendButton() {
     const button = document.createElement("button");
     document.body.appendChild(button);
     button.innerHTML = "send"
