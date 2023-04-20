@@ -24,7 +24,7 @@ async function cancel_bid(A, bid_id, currency_id) {
     const txn = algosdk.makeApplicationCallTxnFromObject({
         from: A,
         appIndex: FAIRMARKET_APP,
-        foreignAssets: [10458941],
+        foreignAssets: [currency_id],
         appArgs: [arg0, arg1],
         boxes: [box],
         suggestedParams: suggestedParams,

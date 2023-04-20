@@ -3,8 +3,8 @@ import algosdk from "algosdk";
 import { PeraWalletConnect } from "@perawallet/connect";
 
 // constants
-export const FAIRMARKET_ACCOUNT = "A2P7TMONFNNJKNDKMDIOGAOQ3HCELYA6OCWR4JIF2PBT6KNQCPVHKY3IVQ"
-export const FAIRMARKET_APP = 190904981
+export const FAIRMARKET_ACCOUNT = "7XDQJVL4XBHQSKF5FVUDMJ4U3W4UCQ5DO7JWAOCPRFZN2AEEQIXV27YE5I"
+export const FAIRMARKET_APP = 202947056
 
 export const FX_APP = 178969021
 export const FX_LP_APP = 148607000
@@ -15,7 +15,7 @@ export const FX_LP_ACCOUNT = {
 
 export const SEND_ALGO = 268900
 
-export const MIN_ROUND = 29281010
+export const MIN_ROUND = 29287438
 
 // algonode
 const baseServerIndexer = "https://testnet-idx.algonode.cloud";
