@@ -55,7 +55,7 @@ export function uint8ArrayToBase64(uint8Array) {
     });
 }
 
-async function sign_and_send(txns, signer) {
+export async function sign_and_send(txns, signer) {
     const txnGroup = algosdk.assignGroupID(txns);
     console.log("txnGroup", txnGroup)
 

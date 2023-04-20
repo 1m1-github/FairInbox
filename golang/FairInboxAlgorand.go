@@ -187,7 +187,7 @@ func encoding_decoding() {
 	fmt.Println(currency_id)
 	// fmt.Println(base64.StdEncoding.EncodeToString(currency_id))
 
-	curreny_amount_int := 1
+	curreny_amount_int := 19
 	currency_amount := make([]byte, 8)
 	binary.BigEndian.PutUint64(currency_amount, uint64(curreny_amount_int))
 	fmt.Println(currency_amount)
