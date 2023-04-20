@@ -15,6 +15,8 @@ export const FX_LP_ACCOUNT = {
 
 export const SEND_ALGO = 268900
 
+export const MIN_ROUND = 29281010
+
 // algonode
 const baseServerIndexer = "https://testnet-idx.algonode.cloud";
 const baseServerAlgod = "https://testnet-api.algonode.cloud";

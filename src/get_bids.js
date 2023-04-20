@@ -1,4 +1,4 @@
-import { indexer, algod, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet } from "./global"
+import { indexer, algod, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet, MIN_ROUND } from "./global"
 import algosdk from "algosdk";
 
 function array_to_map(bids_array) {
@@ -17,7 +17,7 @@ export async function get_in_bids() {
     //     .do();
     const transactionInfo = await indexer
         .searchForTransactions()
-        .minRound(29186779)
+        .minRound(MIN_ROUND)
         .applicationID(FAIRMARKET_APP)
         .txType("appl")
         .notePrefix(btoa(`${user}.`))
@@ -31,7 +31,7 @@ export async function get_in_bids() {
 export async function get_out_bids() {
     const transactionInfo = await indexer
         .searchForTransactions()
-        .minRound(29186779)
+        .minRound(MIN_ROUND)
         .applicationID(FAIRMARKET_APP)
         .address(user)
         .addressRole("sender")
@@ -88,13 +88,27 @@ async function bid_from_txn(txn) {
     const fx_d = algosdk.bytesToBigInt(bid_uint8.slice(88, 96))
     console.log("fx_d", fx_d)
 
-    const type = String.fromCharCode.apply(null, bid_uint8.slice(96, 97));
-    console.log("type", type)
-
-    const time = algosdk.bytesToBigInt(bid_uint8.slice(97, 105))
+    const time = algosdk.bytesToBigInt(bid_uint8.slice(96, 104))
     console.log("time", time)
 
-    const data = String.fromCharCode.apply(null, bid_uint8.slice(105, bid_uint8.length))
+    const chrony_importance = algosdk.bytesToBigInt(bid_uint8.slice(104, 112))
+    console.log("chrony_importance", chrony_importance)
+
+    const highroller_importance = algosdk.bytesToBigInt(bid_uint8.slice(112, 120))
+    console.log("highroller_importance", highroller_importance)
+
+    const subjective_importance = algosdk.bytesToBigInt(bid_uint8.slice(120, 128))
+    console.log("subjective_importance", subjective_importance)
+
+    const min = algosdk.bytesToBigInt(bid_uint8.slice(128, 136))
+    console.log("min", min)
+
+    const encryption_public_key = Uint8Array(bid_uint8.slice(136, 168))
+
+    const type = String.fromCharCode.apply(null, bid_uint8.slice(168, 169));
+    console.log("type", type)
+
+    const data = String.fromCharCode.apply(null, bid_uint8.slice(169, bid_uint8.length))
     console.log("data", data)
 
     return {
@@ -105,8 +119,13 @@ async function bid_from_txn(txn) {
         currency_amount,
         fx_n,
         fx_d,
-        type,
         time,
+        chrony_importance,
+        highroller_importance,
+        subjective_importance,
+        min,
+        encryption_public_key,
+        type,
         data,
     }
 }
