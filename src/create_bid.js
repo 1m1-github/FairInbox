@@ -5,8 +5,8 @@
 // BID_ID = hash($A$B$CURRENCY_ID$CURRENCY_AMOUNT$NOTE)
 
 import algosdk from "algosdk"
-import { user, algod, FAIRMARKET_ACCOUNT, FAIRMARKET_APP, SEND_ALGO, FX_APP, FX_LP_ACCOUNT, FX_LP_APP, peraWallet, uint8ArrayToBase64, b64_to_uint8array } from "./global.js"
-import {sha512_256} from "js-sha512"
+import { sign_and_send, user, algod, FAIRMARKET_ACCOUNT, FAIRMARKET_APP, SEND_ALGO, FX_APP, FX_LP_ACCOUNT, FX_LP_APP, peraWallet, uint8ArrayToBase64, b64_to_uint8array } from "./global.js"
+import { sha512_256 } from "js-sha512"
 
 export function send(B, currency_id, currency_amount, data) {
     console.log("send", peraWallet.isConnected)
@@ -36,7 +36,7 @@ async function calc_bid_id(A, B, currency_id, currency_amount, data) {
 
 async function create_bid(A, B, currency_id, currency_amount, data) {
     console.log("create_bid", A, B, currency_id, currency_amount, data)
-    
+
     const suggestedParams = await algod.getTransactionParams().do();
 
     const FX_txn = algosdk.makeApplicationCallTxnFromObject({
@@ -62,9 +62,9 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
     const arg1 = algosdk.decodeAddress(B).publicKey
     const bid_id = await calc_bid_id(A, B, currency_id, currency_amount, data)
     const arg2 = b64_to_uint8array(bid_id)
-    const box0 = {appIndex: FAIRMARKET_APP, name: arg2}
-    const box1 = {appIndex: FAIRMARKET_APP, name: arg1}
-    const suggestedParamsAppCall = {...suggestedParams}
+    const box0 = { appIndex: FAIRMARKET_APP, name: arg2 }
+    const box1 = { appIndex: FAIRMARKET_APP, name: arg1 }
+    const suggestedParamsAppCall = { ...suggestedParams }
     suggestedParamsAppCall.flatFee = true
     suggestedParamsAppCall.fee = 2000
     const note = `${B}.${data}`
@@ -89,19 +89,5 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
     });
     console.log("asset_send", asset_send_txn)
 
-    const txnGroup = algosdk.assignGroupID([FX_txn, algo_send_txn, app_call_txn, asset_send_txn]);
-    console.log("txnGroup", txnGroup)
-
-    const txnGroupWithSigners = txnGroup.map((txn) => {return { txn: txn, signers: [A] }});
-    console.log("txnGroupWithSigners", txnGroupWithSigners)
-
-    try {
-        const signedTxn = await peraWallet.signTransaction([txnGroupWithSigners]);
-        const result = await algod
-        .sendRawTransaction(signedTxn)
-        .do();
-        console.log("result", result)
-    } catch (error) {
-        console.log("cancel", error);
-    }
+    return sign_and_send([FX_txn, algo_send_txn, app_call_txn, asset_send_txn], A)
 }

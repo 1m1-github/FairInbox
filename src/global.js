@@ -54,3 +54,21 @@ export function uint8ArrayToBase64(uint8Array) {
         reader.readAsDataURL(blob);
     });
 }
+
+async function sign_and_send(txns, signer) {
+    const txnGroup = algosdk.assignGroupID(txns);
+    console.log("txnGroup", txnGroup)
+
+    const txnGroupWithSigners = txnGroup.map((txn) => {return { txn: txn, signers: [signer] }});
+    console.log("txnGroupWithSigners", txnGroupWithSigners)
+
+    try {
+        const signedTxn = await peraWallet.signTransaction([txnGroupWithSigners]);
+        const result = await algod
+        .sendRawTransaction(signedTxn)
+        .do();
+        console.log("result", result)
+    } catch (error) {
+        console.log("cancel", error);
+    }
+}
