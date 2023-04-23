@@ -74,6 +74,9 @@ Some parts needed for Algorand and encoding/decoding do not compile in TinyGo. R
 ## Security
 The off-DLT code contains vanilla js and html only (future: use WASM instead of js). No js frameworks or libs are used besides the DLT sdk, js-sha512 and the wallet connector sdk. This minimizes the risk of injecting malicious code.
 
+## Learned subjective internal ordering using LLMs
+As the theory asks, we choose the learning algorithm (information) as an LLM because our data consists of text. LLMs can understand, given enough examples, and with privacy (your own LLM) that a user can choose this forecasted strategy vs random, which gives a partial ordering overall
+
 ## Stream
 Dev of the project was/is streamed best-effort: https://www.youtube.com/@1m1-yt/streams
 
