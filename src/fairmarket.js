@@ -49,8 +49,6 @@ function bid_type(bid) {
     return "HR"
 }
 
-// see stream for details
-// solution to separate types from bids does not entirely work due to random choices (undeterminism)
 // input: bids have same params and ordered by time
 // example
 // historical_types = now ... [CHSCH] ... later history
@@ -136,6 +134,14 @@ function bid_type(bid) {
 // future ... C ... H ... now ... CH => dec import = (2/3 1/3) => delta = 0.4714045207910317
 // future ... H ... H ... now ... CH => dec import = (1/3 2/3) => delta = 0.0
 // => H
+
+// follow the theory, whitepaper, live
+// that is what is guaranteed
+// need to show that maximal wait time is guaranteed ()
+// actual wait time can be better
+// those that leave the market need not be accounted for anymore
+// serviced/traded reality matters
+
 function fairmarket_ordering_given_constant_params(historical_types, bids) {
 
     // importance
@@ -172,6 +178,14 @@ function fairmarket_ordering_given_constant_params(historical_types, bids) {
     // internal ordering of HR is by value
     const value = (a) => a.currency_amount * a.fx_n / a.fx_d
     bids_map["HR"].sort((a, b) => value(a) - value(b))
+
+    // indices
+    const indices = {
+        CHR: 0,
+        HR: 0,
+        SUBJ: 0,
+        LURK: 0,
+    }
 
     for (let i = 0; i < bids.length; i++) {
         

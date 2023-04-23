@@ -126,18 +126,31 @@ async function bid_from_txn(txn) {
 
     return {
         id: bid_id,
-        time,
-        A,
-        B,
+        
+        time, // epoch
+        
+        A, // from
+        B, // to
+
+        // currency
         currency_id,
         currency_amount,
         fx_n,
         fx_d,
+        // currency
+        
+        // params
         chrony_importance,
         highroller_importance,
         subjective_importance,
         min,
+        // params
+
+        // box public key
+        // https://cs.opensource.google/go/x/crypto/+/refs/heads/master:nacl/box/box.go;drc=a8cc953517d1e689f501d9fcd7b6659a177d2216;l=165
         encryption_public_key,
+
+        // msg
         data,
     }
 }

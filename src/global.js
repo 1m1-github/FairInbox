@@ -17,6 +17,8 @@ export const SEND_ALGO = 268900
 
 export const MIN_ROUND = 29287438
 
+export const CHRONY_PRECISION = 0.1
+
 // algonode
 const baseServerIndexer = "https://testnet-idx.algonode.cloud";
 const baseServerAlgod = "https://testnet-api.algonode.cloud";
