@@ -1,7 +1,7 @@
 // fair ordering
 // https://github.com/1m1-github/FairMarket
 
-import { CHRONY_PRECISION, shuffle } from "./global"
+// import { CHRONY_PRECISION, shuffle } from "./global"
 
 const TYPES = ["CHR", "HR", "LURK", "SUBJ"]
 
@@ -36,7 +36,7 @@ function fairmarket_ordering(historical_types, bids) {
     const ordered_bids = []
     const ordered_LURK = []
     for (let i = 0; i < blocks.length; i++) {
-        const {bids, bids_map} = fairmarket_ordering_given_constant_params(historical_types, blocks[i])
+        const { bids, bids_map } = fairmarket_ordering_given_constant_params(historical_types, blocks[i])
         ordered_bids.push(...bids)
 
         if (0 < i) {
@@ -168,8 +168,9 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
         SUBJ: [],
         LURK: [],
     }
-    for (const bid of chronological_bids.reverse()) {
+    for (const bid of chronological_bids) {
         const type = bid_type(bid, bid.min)
+        // console.log(bid.id, type)
         if (type == "CHR") bids_map["CHR"].push(bid)
         else if (type == "HR") bids_map["HR"].push(bid)
         else if (type == "SUBJ") bids_map["SUBJ"].push(bid)
@@ -183,8 +184,9 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
 
     // internal ordering of HR is by value
     const value = (a) => a.currency_amount * a.fx_n / a.fx_d
-    bids_map["HR"].sort((a, b) => value(a) - value(b)) // TODO check
-    bids_map["LURK"].sort((a, b) => value(a) - value(b)) // TODO check
+    bids_map["HR"].sort((a, b) => value(b) - value(a))
+    bids_map["LURK"].sort((a, b) => value(b) - value(a))
+    // console.log("bids_map", bids_map)
 
     const actual_importances = {
         CHR: 0,
@@ -192,9 +194,10 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
         SUBJ: 0,
         LURK: 0,
     }
-    const history_length = Math.min(historical_types.length, importance_sum - 1)
+    const history_length = Math.min(historical_types.length, importance_sum(importances) - 1)
     historical_types.slice(0, history_length).map(ht => actual_importances[ht]++)
-    
+    // console.log("history_length", history_length)
+
     const bids = []
     const indices = {
         CHR: 0,
@@ -202,33 +205,60 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
         SUBJ: 0,
         LURK: 0,
     }
-    let min_delta = Inf
-    let min_type = "CHR"
-    for (let i = 0; i < chronological_bids.length; i++) {
-        
+
+    const num_non_LURK_bids = bids_map["CHR"].length + bids_map["HR"].length + bids_map["SUBJ"].length
+    for (let i = 0; i < num_non_LURK_bids; i++) {
+
+        // console.log("i", i)
+
         // simulation for each type
-        for (let type of TYPES) {
+        let min_delta = Infinity
+        let min_type = "CHR"
+        for (const type of TYPES) {
+            // console.log("type", type)
+
             // LURKERS are never part of its own bids block
             if (type == "LURK") continue
 
             // nothing left
             if (bids_map[type].length == 0) continue
             if (indices[type] == bids_map[type].length) continue
+            // console.log("something left")
 
             // simulation of actual_importance change
             actual_importances[type]++
             const actual_decimal_importance = decimal_importance(actual_importances)
+            // console.log("actual_decimal_importance", actual_decimal_importance)
+            // console.log("target_decimal_importance", target_decimal_importance)
             const d = delta(actual_decimal_importance, target_decimal_importance)
+            // console.log("d", d)
             if (d < min_delta) {
                 min_delta = d
                 min_type = type
             }
             actual_importances[type]--
-
-            // push
-            bids.push(bids_map[min_type][indices[type]])
-            indices[type]++
         }
+
+        // push
+        bids.push(bids_map[min_type][indices[min_type]])
+        indices[min_type]++
+
+        // update actual_importances
+        actual_importances[min_type]++
+        if (i < history_length) {
+            actual_importances[historical_types[history_length - i - 1]]--
+        }
+        else {
+            const bid_to_lose = bids[i - history_length]
+            const type_to_lose = bid_type(bid_to_lose, bid_to_lose.min)
+            actual_importances[type_to_lose]--
+        }
+
+        // console.log("actual_importances", actual_importances)
+        // console.log("min_delta", min_delta)
+        // console.log("min_type", min_type)
+        // console.log("indices", indices)
+        // console.log("bids", bids)
     }
 
     return {
@@ -238,24 +268,157 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
 }
 
 function bid_type(bid, min) {
+    // console.log("bid_type", bid.id, min)
     if (bid.fx_d == 0 && bid.fx_n == 0) return "SUBJ"
 
-    const value_in_base = bid.amount * bid.fx_n / bid.fx_d
+    const value_in_base = bid.currency_amount * bid.fx_n / bid.fx_d
+    // console.log("bid_type, value_in_base", value_in_base)
 
     const upper_bound_CHRONY = min * Math.exp(CHRONY_PRECISION)
     const lower_bound_CHRONY = min * Math.exp(-CHRONY_PRECISION)
+    // console.log("bid_type, upper_bound_CHRONY", upper_bound_CHRONY)
+    // console.log("bid_type, lower_bound_CHRONY", lower_bound_CHRONY)
 
     if (value_in_base < lower_bound_CHRONY) return "LURK"
     if (value_in_base <= upper_bound_CHRONY) return "CHR"
     return "HR"
 }
 
+function importance_sum(importances) {
+    return importances["CHR"] + importances["HR"] + importances["SUBJ"]
+}
 function decimal_importance(importances) {
-    const importance_sum = importances["CHR"] + importances["HR"] + importances["SUBJ"]
+    const N = importance_sum(importances)
     return [
-        importances["CHR"] / importance_sum,
-        importances["HR"] / importance_sum,
+        importances["CHR"] / N,
+        importances["HR"] / N,
     ]
 }
 
-const delta = (vec1, vec2) => Math.sqrt((vec1[0] - vec2[0])^2 + (vec1[1] - vec2[1])^2)
+const delta = (vec1, vec2) => Math.sqrt((vec1[0] - vec2[0]) ** 2 + (vec1[1] - vec2[1]) ** 2)
+
+// TESTS
+
+// import
+const CHRONY_PRECISION = 0.01
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+// // delta
+// console.log(delta([0.1, 0.3], [0.2, 0.5]) === 0.223606797749979)
+// console.log("\n")
+
+// // decimal_importance
+// console.log(decimal_importance({
+//     CHR: 1,
+//     HR: 2,
+//     SUBJ: 3,
+//     LURK: 0,
+// }))
+// console.log([1 / 6, 2 / 6])
+// console.log("\n")
+
+// // bid_type(bid, min)
+// console.log(bid_type({
+//     currency_amount: 1,
+//     fx_n: 1,
+//     fx_d: 1,
+// }, 1) === "CHR")
+// console.log(bid_type({
+//     currency_amount: 1.11,
+//     fx_n: 1,
+//     fx_d: 1,
+// }, 1) === "HR")
+// console.log(bid_type({
+//     currency_amount: 1,
+//     fx_n: 2,
+//     fx_d: 1,
+// }, 1) === "HR")
+// console.log(bid_type({
+//     currency_amount: 1,
+//     fx_n: 1,
+//     fx_d: 2,
+// }, 1) === "LURK")
+// console.log(bid_type({
+//     currency_amount: 0.95,
+//     fx_n: 1,
+//     fx_d: 1,
+// }, 1) === "CHR")
+// console.log(bid_type({
+//     currency_amount: 0.95,
+//     fx_n: 0,
+//     fx_d: 0,
+// }, 1) === "SUBJ")
+// console.log("\n")
+
+// fairmarket_ordering_given_constant_params(historical_types, chronological_bids)
+
+const chrony = (id, importance, min) => {
+    return {
+        id,
+        currency_amount: min,
+        fx_n: 1,
+        fx_d: 1,
+        chrony_importance: importance["CHR"],
+        highroller_importance: importance["HR"],
+        subjective_importance: importance["SUBJ"],
+        min,
+    }
+}
+const highroller = (id, importance, min) => {
+    return {
+        id,
+        currency_amount: min+id,
+        fx_n: 1,
+        fx_d: 1,
+        chrony_importance: importance["CHR"],
+        highroller_importance: importance["HR"],
+        subjective_importance: importance["SUBJ"],
+        min,
+    }
+}
+const lurker = (id, importance, min) => {
+    return {
+        id,
+        currency_amount: min-id,
+        fx_n: 1,
+        fx_d: 1,
+        chrony_importance: importance["CHR"],
+        highroller_importance: importance["HR"],
+        subjective_importance: importance["SUBJ"],
+        min,
+    }
+}
+const subjective = (id, importance, min) => {
+    return {
+        id,
+        currency_amount: 0,
+        fx_n: 0,
+        fx_d: 0,
+        chrony_importance: importance["CHR"],
+        highroller_importance: importance["HR"],
+        subjective_importance: importance["SUBJ"],
+        min,
+    }
+}
+importance = {
+    CHR: 1,
+    HR: 2,
+    SUBJ: 1,
+    LURK: 0,
+}
+const min = 100
+console.log(fairmarket_ordering_given_constant_params(["CHR", "HR", "SUBJ"], [
+    chrony(1, importance, min),
+    chrony(2, importance, min),
+    highroller(3, importance, min),
+    highroller(4, importance, min),
+    subjective(5, importance, min),
+    subjective(6, importance, min),
+    lurker(7, importance, min),
+    lurker(8, importance, min),
+]))
