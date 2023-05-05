@@ -7,7 +7,7 @@ const TYPES = ["CHR", "HR", "LURK", "SUBJ"]
 
 const bid_to_params_summary = (bid) => `${bid.chrony_importance}.${bid.highroller_importance}.${bid.subjective_importance}.${bid.min}`
 
-function fairmarket_ordering(bids) {
+function fairmarket_ordering(historical_types, bids) {
 
     // order by time
     bids = bids.sort((a, b) => a.time - b.time) // TODO check
@@ -33,10 +33,27 @@ function fairmarket_ordering(bids) {
     blocks = blocks.slice(1)
 
     // order constant param groups
-    const ordered_blocks = blocks.map(fairmarket_ordering_given_constant_params)
+    const ordered_bids = []
+    const ordered_LURK = []
+    for (let i = 0; i < blocks.length; i++) {
+        const {bids, bids_map} = fairmarket_ordering_given_constant_params(historical_types, blocks[i])
+        ordered_bids.push(...bids)
+
+        if (0 < i) {
+            for (const bid of ordered_LURK) {
+                const new_type_for_LURK = bid_type(bid, bids[0].min)
+                if (new_type_for_LURK !== "LURK") {
+                    ordered_bids.push(bid)
+                }
+            }
+        }
+        ordered_LURK.push(...bids_map["LURK"])
+
+        historical_types.push(...ordered_bids) // TODO check
+    }
 
     // merge
-    return ordered_blocks.flat()
+    return ordered_bids
 }
 
 // input: bids have same params and ordered by time
@@ -152,7 +169,7 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
         LURK: [],
     }
     for (const bid of chronological_bids.reverse()) {
-        const type = bid_type(bid)
+        const type = bid_type(bid, bid.min)
         if (type == "CHR") bids_map["CHR"].push(bid)
         else if (type == "HR") bids_map["HR"].push(bid)
         else if (type == "SUBJ") bids_map["SUBJ"].push(bid)
@@ -218,6 +235,19 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
         bids,
         bids_map,
     }
+}
+
+function bid_type(bid, min) {
+    if (bid.fx_d == 0 && bid.fx_n == 0) return "SUBJ"
+
+    const value_in_base = bid.amount * bid.fx_n / bid.fx_d
+
+    const upper_bound_CHRONY = min * Math.exp(CHRONY_PRECISION)
+    const lower_bound_CHRONY = min * Math.exp(-CHRONY_PRECISION)
+
+    if (value_in_base < lower_bound_CHRONY) return "LURK"
+    if (value_in_base <= upper_bound_CHRONY) return "CHR"
+    return "HR"
 }
 
 function decimal_importance(importances) {

@@ -143,7 +143,7 @@ async function bid_from_txn(txn) {
         chrony_importance,
         highroller_importance,
         subjective_importance,
-        min,
+        min, // always in base currency
         // params
 
         // box public key
