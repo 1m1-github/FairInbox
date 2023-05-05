@@ -1,57 +1,48 @@
 // fair ordering
 // https://github.com/1m1-github/FairMarket
 
-import { CHRONY_PRECISION } from "./global"
+import { CHRONY_PRECISION, shuffle } from "./global"
+
+const TYPES = ["CHR", "HR", "LURK", "SUBJ"]
 
 const bid_to_params_summary = (bid) => `${bid.chrony_importance}.${bid.highroller_importance}.${bid.subjective_importance}.${bid.min}`
 
 function fairmarket_ordering(bids) {
 
     // order by time
-    bids = bids.sort((a, b) => a.time - b.time)
+    bids = bids.sort((a, b) => a.time - b.time) // TODO check
 
     // group by sequential constant params
-    const groups = []
-    const current_group = []
+    const blocks = []
+    const current_block = []
     let previous_params = ''
     for (const bid of bids) {
         const current_params = bid_to_params_summary(bid)
-        
+
         if (current_params == previous_params) {
-            current_group.push(bid)
+            current_block.push(bid)
         }
         else {
-            groups.push(current_group)
-            current_group = [bid]
+            blocks.push(current_block)
+            current_block = [bid]
         }
 
         previous_params = current_params
     }
-    if (0 < current_group.length) groups.push(current_group)
-    groups = groups.slice(1)
+    if (0 < current_block.length) blocks.push(current_block)
+    blocks = blocks.slice(1)
 
     // order constant param groups
-    const ordered_groups = groups.map(fairmarket_ordering_given_constant_params)
+    const ordered_blocks = blocks.map(fairmarket_ordering_given_constant_params)
 
     // merge
-    return ordered_groups.flat()
-}
-
-function bid_type(bid) {
-    if (fx_d == 0 && fx_n == 0) return "SUBJ"
-    
-    const currency_amount_after_fx = bid.currency_amount * bid.fx_n / bid.fx_d
-    const chrony_lower_bound = max(0.0, bid.min * Math.exp(-CHRONY_PRECISION))
-    const chrony_upper_bound = bid.min * Math.exp(CHRONY_PRECISION)
-
-    if (currency_amount_after_fx < chrony_lower_bound) return "LURK"
-    if (currency_amount_after_fx <= chrony_upper_bound) return "CHR"
-    return "HR"
+    return ordered_blocks.flat()
 }
 
 // input: bids have same params and ordered by time
 // example
 // historical_types = now ... [CHSCH] ... later history
+// (actual historical types are {"CHR", "HR", "LURK", "SUBJ"})
 // now = T(0)
 // bids = [B_T(1), ..., B_T(N)]
 // bids_map[CHR] = [B_T(1), B_T(2)]
@@ -142,22 +133,16 @@ function bid_type(bid) {
 // those that leave the market need not be accounted for anymore
 // serviced/traded reality matters
 
-function fairmarket_ordering_given_constant_params(historical_types, bids) {
+function fairmarket_ordering_given_constant_params(historical_types, chronological_bids) {
 
     // importance
     const importances = {
-        CHR: bids[0].chrony_importance,
-        HR: bids[0].highroller_importance,
-        SUBJ: bids[0].subjective_importance,
+        CHR: chronological_bids[0].chrony_importance,
+        HR: chronological_bids[0].highroller_importance,
+        SUBJ: chronological_bids[0].subjective_importance,
         LURK: 0,
     }
-    const importance_sum = importances["CHR"] + importances["HR"] + importances["SUBJ"]
-    const importances_decimal = {
-        CHR: importances["CHR"] / importance_sum,
-        HR: importances["HR"] / importance_sum,
-        SUBJ: importances["SUBJ"] / importance_sum,
-        LURK: 0,
-    }
+    const target_decimal_importance = decimal_importance(importances)
 
     // filtering
     const bids_map = {
@@ -166,33 +151,81 @@ function fairmarket_ordering_given_constant_params(historical_types, bids) {
         SUBJ: [],
         LURK: [],
     }
-    for (const bid of bids) {
+    for (const bid of chronological_bids.reverse()) {
         const type = bid_type(bid)
         if (type == "CHR") bids_map["CHR"].push(bid)
-        if (type == "HR") bids_map["HR"].push(bid)
-        if (type == "SUBJ") bids_map["SUBJ"].push(bid)
-        if (type == "LURK") bids_map["LURK"].push(bid)
-        throw new Error("impossible bid type", bid, type)
+        else if (type == "HR") bids_map["HR"].push(bid)
+        else if (type == "SUBJ") bids_map["SUBJ"].push(bid)
+        else if (type == "LURK") bids_map["LURK"].push(bid)
+        else throw new Error("impossible bid type", bid, type)
     }
+
+    // SUBJ - later apply learning algo ~ e.g. on special SUBJ bids where the data is text which is also the currency as an NFT representing a promise/contract which is stated in said text ~ an LLM could learn to mimick ones likes and dislikes, opening for the most open and fair human bartering market
+    // for now, randomize, its the same as having a learning algo without data
+    shuffle(bids_map["SUBJ"])
 
     // internal ordering of HR is by value
     const value = (a) => a.currency_amount * a.fx_n / a.fx_d
-    bids_map["HR"].sort((a, b) => value(a) - value(b))
+    bids_map["HR"].sort((a, b) => value(a) - value(b)) // TODO check
+    bids_map["LURK"].sort((a, b) => value(a) - value(b)) // TODO check
 
-    // indices
+    const actual_importances = {
+        CHR: 0,
+        HR: 0,
+        SUBJ: 0,
+        LURK: 0,
+    }
+    const history_length = Math.min(historical_types.length, importance_sum - 1)
+    historical_types.slice(0, history_length).map(ht => actual_importances[ht]++)
+    
+    const bids = []
     const indices = {
         CHR: 0,
         HR: 0,
         SUBJ: 0,
         LURK: 0,
     }
-
-    for (let i = 0; i < bids.length; i++) {
+    let min_delta = Inf
+    let min_type = "CHR"
+    for (let i = 0; i < chronological_bids.length; i++) {
         
+        // simulation for each type
+        for (let type of TYPES) {
+            // LURKERS are never part of its own bids block
+            if (type == "LURK") continue
+
+            // nothing left
+            if (bids_map[type].length == 0) continue
+            if (indices[type] == bids_map[type].length) continue
+
+            // simulation of actual_importance change
+            actual_importances[type]++
+            const actual_decimal_importance = decimal_importance(actual_importances)
+            const d = delta(actual_decimal_importance, target_decimal_importance)
+            if (d < min_delta) {
+                min_delta = d
+                min_type = type
+            }
+            actual_importances[type]--
+
+            // push
+            bids.push(bids_map[min_type][indices[type]])
+            indices[type]++
+        }
     }
 
     return {
-        bids: ordered_bids,
-        subjective: subjective_bids,
+        bids,
+        bids_map,
     }
 }
+
+function decimal_importance(importances) {
+    const importance_sum = importances["CHR"] + importances["HR"] + importances["SUBJ"]
+    return [
+        importances["CHR"] / importance_sum,
+        importances["HR"] / importance_sum,
+    ]
+}
+
+const delta = (vec1, vec2) => Math.sqrt((vec1[0] - vec2[0])^2 + (vec1[1] - vec2[1])^2)
