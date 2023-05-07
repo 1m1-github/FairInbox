@@ -70,6 +70,7 @@ Some parts needed for Algorand and encoding/decoding do not compile in TinyGo. R
 ## Build
 `npx webpack`
 `./node_modules/.bin/http-server -a localhost dist`
+`npx webpack && ./node_modules/.bin/http-server -a localhost dist`
 
 ## Security
 The off-DLT code contains vanilla js and html only (future: use WASM instead of js). No js frameworks or libs are used besides the DLT sdk, js-sha512 and the wallet connector sdk. This minimizes the risk of injecting malicious code.

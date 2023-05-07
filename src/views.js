@@ -8,6 +8,9 @@ import { update_params } from "./update_params.js"
 
 export function init() {
     addLoginButton()
+
+    // DEBUG
+    addLoggedInView()
 }
 
 export const connectButton = document.createElement("button");
@@ -52,7 +55,9 @@ export function addSendButton() {
     button.addEventListener("click", (event) => {
         console.log("addCreateBidButton", peraWallet.isConnected)
         if (!user) return
-        let B = "5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU"
+        let A = "HQMMGGF3KJRPTEZV6GKGT6PNQJBZWUBIQMHG4XBVGBIV2E2V4LWOFHVEAA"
+        let B = A
+        // let B = "5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU"
         let currency_amount = 2
         let currency_id = 10458941
         let data = "hi"

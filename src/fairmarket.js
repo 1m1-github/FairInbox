@@ -1,7 +1,7 @@
 // fair ordering
 // https://github.com/1m1-github/FairMarket
 
-// import { CHRONY_PRECISION, shuffle } from "./global"
+import { CHRONY_PRECISION, shuffle } from "./global"
 
 const TYPES = ["CHR", "HR", "LURK", "SUBJ"]
 
@@ -69,7 +69,7 @@ function promote_LURK(current_block, ordered_LURK_bids, block_min) {
 }
 
 export function fairmarket_ordering(historical_types, bids) {
-
+    console.log("bids", bids)
     // order by time
     bids = bids.sort((a, b) => a.time - b.time) // TODO check
 
@@ -322,8 +322,8 @@ function bid_type(bid, min) {
     const value_in_base = bid.currency_amount * bid.fx_n / bid.fx_d
     // console.log("bid_type, value_in_base", value_in_base)
 
-    const upper_bound_CHRONY = min * Math.exp(CHRONY_PRECISION)
-    const lower_bound_CHRONY = min * Math.exp(-CHRONY_PRECISION)
+    const upper_bound_CHRONY = Number(min) * Math.exp(CHRONY_PRECISION)
+    const lower_bound_CHRONY = Number(min) * Math.exp(-CHRONY_PRECISION)
     // console.log("bid_type, upper_bound_CHRONY", upper_bound_CHRONY)
     // console.log("bid_type, lower_bound_CHRONY", lower_bound_CHRONY)
 
@@ -333,13 +333,13 @@ function bid_type(bid, min) {
 }
 
 function importance_sum(importances) {
-    return importances["CHR"] + importances["HR"] + importances["SUBJ"]
+    return Number(importances["CHR"] + importances["HR"] + importances["SUBJ"])
 }
 function decimal_importance(importances) {
     const N = importance_sum(importances)
     return [
-        importances["CHR"] / N,
-        importances["HR"] / N,
+        Number(importances["CHR"]) / N,
+        Number(importances["HR"]) / N,
     ]
 }
 
@@ -348,13 +348,13 @@ const delta = (vec1, vec2) => Math.sqrt((vec1[0] - vec2[0]) ** 2 + (vec1[1] - ve
 // TESTS
 
 // import
-const CHRONY_PRECISION = 0
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
+// const CHRONY_PRECISION = 0
+// function shuffle(array) {
+//     for (let i = array.length - 1; i > 0; i--) {
+//         const j = Math.floor(Math.random() * (i + 1));
+//         [array[i], array[j]] = [array[j], array[i]];
+//     }
+// }
 
 // // delta
 // console.log(delta([0.1, 0.3], [0.2, 0.5]) === 0.223606797749979)
@@ -405,113 +405,113 @@ function shuffle(array) {
 
 // fairmarket_ordering_given_constant_params(historical_types, chronological_bids)
 
-let id = 0
-const chrony = (importance, min) => {
-    return {
-        id: id++,
-        currency_amount: min,
-        fx_n: 1,
-        fx_d: 1,
-        importance,
-        min,
-    }
-}
-const highroller = (importance, min) => {
-    return {
-        id: id++,
-        currency_amount: min + id,
-        fx_n: 1,
-        fx_d: 1,
-        importance,
-        min,
-    }
-}
-const lurker = (importance, min) => {
-    return {
-        id: id++,
-        currency_amount: min - id,
-        fx_n: 1,
-        fx_d: 1,
-        importance,
-        min,
-    }
-}
-const subjective = (importance, min) => {
-    return {
-        id: id++,
-        currency_amount: 0,
-        fx_n: 0,
-        fx_d: 0,
-        importance,
-        min,
-    }
-}
-
-// importance = {
-//     CHR: 1,
-//     HR: 2,
-//     SUBJ: 1,
-//     LURK: 0,
+// let id = 0
+// const chrony = (importance, min) => {
+//     return {
+//         id: id++,
+//         currency_amount: min,
+//         fx_n: 1,
+//         fx_d: 1,
+//         importance,
+//         min,
+//     }
 // }
-// const min = 100
-// console.log(fairmarket_ordering_given_constant_params(["CHR", "HR", "SUBJ"], [
-//     chrony(importance, min),
-//     chrony(importance, min),
-//     highroller(importance, min),
-//     highroller(importance, min),
-//     subjective(importance, min),
-//     subjective(importance, min),
-//     lurker(importance, min),
-//     lurker(importance, min),
-// ]))
+// const highroller = (importance, min) => {
+//     return {
+//         id: id++,
+//         currency_amount: min + id,
+//         fx_n: 1,
+//         fx_d: 1,
+//         importance,
+//         min,
+//     }
+// }
+// const lurker = (importance, min) => {
+//     return {
+//         id: id++,
+//         currency_amount: min - id,
+//         fx_n: 1,
+//         fx_d: 1,
+//         importance,
+//         min,
+//     }
+// }
+// const subjective = (importance, min) => {
+//     return {
+//         id: id++,
+//         currency_amount: 0,
+//         fx_n: 0,
+//         fx_d: 0,
+//         importance,
+//         min,
+//     }
+// }
 
-// fairmarket_ordering(historical_types, bids)
-importance_1 = {
-    CHR: 1,
-    HR: 2,
-    SUBJ: 1,
-    LURK: 0,
-}
-const min_1 = 100
-importance_2 = {
-    CHR: 1,
-    HR: 2,
-    SUBJ: 1,
-    LURK: 0,
-}
-const min_2 = 90
-importance_3 = {
-    CHR: 1,
-    HR: 2,
-    SUBJ: 1,
-    LURK: 0,
-}
-const min_3 = 100
-const ordered_bids = fairmarket_ordering(["CHR", "HR", "SUBJ"], [
-    chrony(importance_1, min_1),
-    chrony(importance_1, min_1),
-    highroller(importance_1, min_1),
-    highroller(importance_1, min_1),
-    subjective(importance_1, min_1),
-    subjective(importance_1, min_1),
-    lurker(importance_1, min_1),
-    lurker(importance_1, min_1),
-    chrony(importance_2, min_2),
-    chrony(importance_2, min_2),
-    highroller(importance_2, min_2),
-    highroller(importance_2, min_2),
-    subjective(importance_2, min_2),
-    subjective(importance_2, min_2),
-    lurker(importance_2, min_2),
-    lurker(importance_2, min_2),
-    // chrony(importance_3, min_3),
-    // chrony(importance_3, min_3),
-    // highroller(importance_3, min_3),
-    // highroller(importance_3, min_3),
-    // subjective(importance_3, min_3),
-    // subjective(importance_3, min_3),
-    // lurker(importance_3, min_3),
-    // lurker(importance_3, min_3),
-])
-// console.log(ordered_bids)
-console.log(ordered_bids.map((bid) => bid_type(bid, bid.min)))
+// // importance = {
+// //     CHR: 1,
+// //     HR: 2,
+// //     SUBJ: 1,
+// //     LURK: 0,
+// // }
+// // const min = 100
+// // console.log(fairmarket_ordering_given_constant_params(["CHR", "HR", "SUBJ"], [
+// //     chrony(importance, min),
+// //     chrony(importance, min),
+// //     highroller(importance, min),
+// //     highroller(importance, min),
+// //     subjective(importance, min),
+// //     subjective(importance, min),
+// //     lurker(importance, min),
+// //     lurker(importance, min),
+// // ]))
+
+// // fairmarket_ordering(historical_types, bids)
+// // importance_1 = {
+// //     CHR: 1,
+// //     HR: 2,
+// //     SUBJ: 1,
+// //     LURK: 0,
+// // }
+// // const min_1 = 100
+// // importance_2 = {
+// //     CHR: 1,
+// //     HR: 2,
+// //     SUBJ: 1,
+// //     LURK: 0,
+// // }
+// // const min_2 = 90
+// // importance_3 = {
+// //     CHR: 1,
+// //     HR: 2,
+// //     SUBJ: 1,
+// //     LURK: 0,
+// // }
+// // const min_3 = 100
+// // const ordered_bids = fairmarket_ordering(["CHR", "HR", "SUBJ"], [
+// //     chrony(importance_1, min_1),
+// //     chrony(importance_1, min_1),
+// //     highroller(importance_1, min_1),
+// //     highroller(importance_1, min_1),
+// //     subjective(importance_1, min_1),
+// //     subjective(importance_1, min_1),
+// //     lurker(importance_1, min_1),
+// //     lurker(importance_1, min_1),
+// //     chrony(importance_2, min_2),
+// //     chrony(importance_2, min_2),
+// //     highroller(importance_2, min_2),
+// //     highroller(importance_2, min_2),
+// //     subjective(importance_2, min_2),
+// //     subjective(importance_2, min_2),
+// //     lurker(importance_2, min_2),
+// //     lurker(importance_2, min_2),
+// //     // chrony(importance_3, min_3),
+// //     // chrony(importance_3, min_3),
+// //     // highroller(importance_3, min_3),
+// //     // highroller(importance_3, min_3),
+// //     // subjective(importance_3, min_3),
+// //     // subjective(importance_3, min_3),
+// //     // lurker(importance_3, min_3),
+// //     // lurker(importance_3, min_3),
+// // ])
+// // // console.log(ordered_bids)
+// // // console.log(ordered_bids.map((bid) => bid_type(bid, bid.min)))

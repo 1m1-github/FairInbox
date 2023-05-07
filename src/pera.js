@@ -7,7 +7,7 @@ export function reconnectSession() {
     peraWallet
         .reconnectSession()
         .then((accounts) => {
-            peraWallet.connector.on("disconnect", handleDisconnectWalletClick);
+            peraWallet.connector?.on("disconnect", handleDisconnectWalletClick);
             console.log("reconnectSession 2", peraWallet.isConnected)
             if (accounts.length) {
                 user = accounts[0];

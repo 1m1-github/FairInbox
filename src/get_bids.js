@@ -1,5 +1,6 @@
 import { indexer, algod, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet, MIN_ROUND } from "./global"
 import algosdk from "algosdk";
+import { fairmarket_ordering } from "./fairmarket"
 
 function array_to_map(bids_array) {
     const bids_map = {}
@@ -11,7 +12,7 @@ function array_to_map(bids_array) {
 
 export async function get_in_bids() {
     console.log("get_in_bids", peraWallet.isConnected)
-        // const transactionInfo = await indexerClient
+    // const transactionInfo = await indexerClient
     //     .searchForTransactions()
     //     .txid("QPDRSHL44EU3WMLZKUD7QLMECWJ3HNKOJYQHSEPJIHLUVYN3CG6Q")
     //     .do();
@@ -25,6 +26,8 @@ export async function get_in_bids() {
     console.log(transactionInfo);
     const bid_ins_array = await get_bids(transactionInfo);
     bid_ins = array_to_map(bid_ins_array)
+    const historical_types = [] // assume no history for now...TODO
+    bid_ins = fairmarket_ordering(historical_types, Object.values(bid_ins))
     return bid_ins;
 }
 
@@ -118,7 +121,7 @@ async function bid_from_txn(txn) {
     counter += INT_LENGTH
     console.log("min", min)
 
-    const encryption_public_key = Uint8Array(bid_uint8.slice(counter, counter + ADDRESS_LENGTH))
+    const encryption_public_key = new Uint8Array(bid_uint8.slice(counter, counter + ADDRESS_LENGTH))
     counter += ADDRESS_LENGTH
 
     const data = String.fromCharCode.apply(null, bid_uint8.slice(counter, bid_uint8.length))
@@ -126,9 +129,9 @@ async function bid_from_txn(txn) {
 
     return {
         id: bid_id,
-        
+
         time, // epoch
-        
+
         A, // from
         B, // to
 
@@ -138,10 +141,10 @@ async function bid_from_txn(txn) {
         fx_n,
         fx_d,
         // currency
-        
+
         // params
         importance: {
-            CHR: chrony_importance, 
+            CHR: chrony_importance,
             HR: highroller_importance,
             SUBJ: subjective_importance,
             LURK: 0,
