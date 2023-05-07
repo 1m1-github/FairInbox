@@ -140,9 +140,12 @@ async function bid_from_txn(txn) {
         // currency
         
         // params
-        chrony_importance,
-        highroller_importance,
-        subjective_importance,
+        importance: {
+            CHR: chrony_importance, 
+            HR: highroller_importance,
+            SUBJ: subjective_importance,
+            LURK: 0,
+        },
         min, // always in base currency
         // params
 

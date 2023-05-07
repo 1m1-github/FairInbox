@@ -5,16 +5,12 @@
 
 const TYPES = ["CHR", "HR", "LURK", "SUBJ"]
 
-const bid_to_params_summary = (bid) => `${bid.chrony_importance}.${bid.highroller_importance}.${bid.subjective_importance}.${bid.min}`
+const bid_to_params_summary = (bid) => `${bid.importance["CHR"]}.${bid.importance["HR"]}.${bid.importance["LURK"]}.${bid.importance["SUBJ"]}.${bid.min}`
 
-function fairmarket_ordering(historical_types, bids) {
-
-    // order by time
-    bids = bids.sort((a, b) => a.time - b.time) // TODO check
-
+function create_blocks(bids) {
     // group by sequential constant params
-    const blocks = []
-    const current_block = []
+    let blocks = []
+    let current_block = []
     let previous_params = ''
     for (const bid of bids) {
         const current_params = bid_to_params_summary(bid)
@@ -30,24 +26,78 @@ function fairmarket_ordering(historical_types, bids) {
         previous_params = current_params
     }
     if (0 < current_block.length) blocks.push(current_block)
-    blocks = blocks.slice(1)
+    return blocks.slice(1) // remove first, current_block = []
+}
+
+// CHANGES current_block and ordered_LURK_bids
+function promote_LURK(current_block, ordered_LURK_bids, block_min) {
+
+    // promote LURK if appropriate
+    const promoted_ix = []
+    for (let j = 0; j < ordered_LURK_bids.length; j++) {
+        const bid = ordered_LURK_bids[j]
+        const new_type_for_LURK = bid_type(bid, block_min)
+        // console.log("new_type_for_LURK", new_type_for_LURK)
+        if (new_type_for_LURK !== "LURK") {
+            // bid is before blocks[i] in time
+            promoted_ix.push(j)
+        }
+    }
+
+    // console.log("promoted_ix", promoted_ix)
+    // console.log("ordered_LURK_bids", ordered_LURK_bids)
+
+    // move promoted LURK to block
+    // const promoted_LURK_bids = []
+    let splice_offset = 0
+    for (const j of promoted_ix) {
+        // console.log("j", j)
+        const bid = ordered_LURK_bids[j + splice_offset]
+        // console.log("bid", bid)
+        // promoted_LURK_bids.push(bid)
+        current_block.unshift(bid)
+        // console.log("promoted_LURK_bids", promoted_LURK_bids)
+        ordered_LURK_bids.splice(j + splice_offset, 1)
+        // console.log("ordered_LURK_bids", ordered_LURK_bids)
+        splice_offset -= 1
+    }
+    // console.log("promoted_LURK_bids", promoted_LURK_bids)
+    // console.log("ordered_LURK_bids", ordered_LURK_bids)
+    // console.log("current_block", current_block)
+    // current_block = [...promoted_LURK_bids, ...current_block]
+    // console.log("current_block", current_block)
+}
+
+export function fairmarket_ordering(historical_types, bids) {
+
+    // order by time
+    bids = bids.sort((a, b) => a.time - b.time) // TODO check
+
+    // group by constant sequetial params
+    const blocks = create_blocks(bids)
 
     // order constant param groups
     const ordered_bids = []
-    const ordered_LURK = []
+    const ordered_LURK_bids = []
     for (let i = 0; i < blocks.length; i++) {
-        const { bids, bids_map } = fairmarket_ordering_given_constant_params(historical_types, blocks[i])
+
+        // console.log("i", i)
+
+        let current_block = blocks[i]
+        const block_min = current_block[0].min
+        const block_importance = current_block[0].importance
+
+        if (0 < i) { // only possible from 2nd block
+            // changes current_block, ordered_LURK_bids
+            // console.log("before promote", current_block, ordered_LURK_bids, block_min)
+            promote_LURK(current_block, ordered_LURK_bids, block_min)
+            // console.log("after promote", current_block, ordered_LURK_bids, block_min)
+        }
+
+        const { bids, bids_map } = fairmarket_ordering_given_constant_params(historical_types, current_block, block_min, block_importance)
         ordered_bids.push(...bids)
 
-        if (0 < i) {
-            for (const bid of ordered_LURK) {
-                const new_type_for_LURK = bid_type(bid, bids[0].min)
-                if (new_type_for_LURK !== "LURK") {
-                    ordered_bids.push(bid)
-                }
-            }
-        }
-        ordered_LURK.push(...bids_map["LURK"])
+        ordered_LURK_bids.push(...bids_map["LURK"])
 
         historical_types.push(...ordered_bids) // TODO check
     }
@@ -150,33 +200,14 @@ function fairmarket_ordering(historical_types, bids) {
 // those that leave the market need not be accounted for anymore
 // serviced/traded reality matters
 
-function fairmarket_ordering_given_constant_params(historical_types, chronological_bids) {
+function fairmarket_ordering_given_constant_params(historical_types, chronological_bids, block_min, block_importance) {
 
-    // importance
-    const importances = {
-        CHR: chronological_bids[0].chrony_importance,
-        HR: chronological_bids[0].highroller_importance,
-        SUBJ: chronological_bids[0].subjective_importance,
-        LURK: 0,
-    }
-    const target_decimal_importance = decimal_importance(importances)
+    // console.log("chronological_bids", chronological_bids)
+
+    const block_decimal_importance = decimal_importance(block_importance)
 
     // filtering
-    const bids_map = {
-        CHR: [],
-        HR: [],
-        SUBJ: [],
-        LURK: [],
-    }
-    for (const bid of chronological_bids) {
-        const type = bid_type(bid, bid.min)
-        // console.log(bid.id, type)
-        if (type == "CHR") bids_map["CHR"].push(bid)
-        else if (type == "HR") bids_map["HR"].push(bid)
-        else if (type == "SUBJ") bids_map["SUBJ"].push(bid)
-        else if (type == "LURK") bids_map["LURK"].push(bid)
-        else throw new Error("impossible bid type", bid, type)
-    }
+    const bids_map = create_bids_map(chronological_bids, block_min)
 
     // SUBJ - later apply learning algo ~ e.g. on special SUBJ bids where the data is text which is also the currency as an NFT representing a promise/contract which is stated in said text ~ an LLM could learn to mimick ones likes and dislikes, opening for the most open and fair human bartering market
     // for now, randomize, its the same as having a learning algo without data
@@ -186,16 +217,17 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
     const value = (a) => a.currency_amount * a.fx_n / a.fx_d
     bids_map["HR"].sort((a, b) => value(b) - value(a))
     bids_map["LURK"].sort((a, b) => value(b) - value(a))
+    
     // console.log("bids_map", bids_map)
 
-    const actual_importances = {
+    const actual_importance = {
         CHR: 0,
         HR: 0,
         SUBJ: 0,
         LURK: 0,
     }
-    const history_length = Math.min(historical_types.length, importance_sum(importances) - 1)
-    historical_types.slice(0, history_length).map(ht => actual_importances[ht]++)
+    const history_length = Math.min(historical_types.length, importance_sum(block_importance) - 1)
+    historical_types.slice(0, history_length).map(ht => actual_importance[ht]++)
     // console.log("history_length", history_length)
 
     const bids = []
@@ -226,17 +258,17 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
             // console.log("something left")
 
             // simulation of actual_importance change
-            actual_importances[type]++
-            const actual_decimal_importance = decimal_importance(actual_importances)
+            actual_importance[type]++
+            const actual_decimal_importance = decimal_importance(actual_importance)
             // console.log("actual_decimal_importance", actual_decimal_importance)
             // console.log("target_decimal_importance", target_decimal_importance)
-            const d = delta(actual_decimal_importance, target_decimal_importance)
+            const d = delta(actual_decimal_importance, block_decimal_importance)
             // console.log("d", d)
             if (d < min_delta) {
                 min_delta = d
                 min_type = type
             }
-            actual_importances[type]--
+            actual_importance[type]--
         }
 
         // push
@@ -244,14 +276,14 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
         indices[min_type]++
 
         // update actual_importances
-        actual_importances[min_type]++
+        actual_importance[min_type]++
         if (i < history_length) {
-            actual_importances[historical_types[history_length - i - 1]]--
+            actual_importance[historical_types[history_length - i - 1]]--
         }
         else {
             const bid_to_lose = bids[i - history_length]
             const type_to_lose = bid_type(bid_to_lose, bid_to_lose.min)
-            actual_importances[type_to_lose]--
+            actual_importance[type_to_lose]--
         }
 
         // console.log("actual_importances", actual_importances)
@@ -265,6 +297,22 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
         bids,
         bids_map,
     }
+}
+
+function create_bids_map(bids, block_min) {
+    const bids_map = {
+        CHR: [],
+        HR: [],
+        SUBJ: [],
+        LURK: [],
+    }
+    for (const bid of bids) {
+        // console.log("bid", bid)
+        const type = bid_type(bid, block_min)
+        // console.log(bid.id, type)
+        bids_map[type].push(bid)
+    }
+    return bids_map
 }
 
 function bid_type(bid, min) {
@@ -300,7 +348,7 @@ const delta = (vec1, vec2) => Math.sqrt((vec1[0] - vec2[0]) ** 2 + (vec1[1] - ve
 // TESTS
 
 // import
-const CHRONY_PRECISION = 0.01
+const CHRONY_PRECISION = 0
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -357,68 +405,113 @@ function shuffle(array) {
 
 // fairmarket_ordering_given_constant_params(historical_types, chronological_bids)
 
-const chrony = (id, importance, min) => {
+let id = 0
+const chrony = (importance, min) => {
     return {
-        id,
+        id: id++,
         currency_amount: min,
         fx_n: 1,
         fx_d: 1,
-        chrony_importance: importance["CHR"],
-        highroller_importance: importance["HR"],
-        subjective_importance: importance["SUBJ"],
+        importance,
         min,
     }
 }
-const highroller = (id, importance, min) => {
+const highroller = (importance, min) => {
     return {
-        id,
-        currency_amount: min+id,
+        id: id++,
+        currency_amount: min + id,
         fx_n: 1,
         fx_d: 1,
-        chrony_importance: importance["CHR"],
-        highroller_importance: importance["HR"],
-        subjective_importance: importance["SUBJ"],
+        importance,
         min,
     }
 }
-const lurker = (id, importance, min) => {
+const lurker = (importance, min) => {
     return {
-        id,
-        currency_amount: min-id,
+        id: id++,
+        currency_amount: min - id,
         fx_n: 1,
         fx_d: 1,
-        chrony_importance: importance["CHR"],
-        highroller_importance: importance["HR"],
-        subjective_importance: importance["SUBJ"],
+        importance,
         min,
     }
 }
-const subjective = (id, importance, min) => {
+const subjective = (importance, min) => {
     return {
-        id,
+        id: id++,
         currency_amount: 0,
         fx_n: 0,
         fx_d: 0,
-        chrony_importance: importance["CHR"],
-        highroller_importance: importance["HR"],
-        subjective_importance: importance["SUBJ"],
+        importance,
         min,
     }
 }
-importance = {
+
+// importance = {
+//     CHR: 1,
+//     HR: 2,
+//     SUBJ: 1,
+//     LURK: 0,
+// }
+// const min = 100
+// console.log(fairmarket_ordering_given_constant_params(["CHR", "HR", "SUBJ"], [
+//     chrony(importance, min),
+//     chrony(importance, min),
+//     highroller(importance, min),
+//     highroller(importance, min),
+//     subjective(importance, min),
+//     subjective(importance, min),
+//     lurker(importance, min),
+//     lurker(importance, min),
+// ]))
+
+// fairmarket_ordering(historical_types, bids)
+importance_1 = {
     CHR: 1,
     HR: 2,
     SUBJ: 1,
     LURK: 0,
 }
-const min = 100
-console.log(fairmarket_ordering_given_constant_params(["CHR", "HR", "SUBJ"], [
-    chrony(1, importance, min),
-    chrony(2, importance, min),
-    highroller(3, importance, min),
-    highroller(4, importance, min),
-    subjective(5, importance, min),
-    subjective(6, importance, min),
-    lurker(7, importance, min),
-    lurker(8, importance, min),
-]))
+const min_1 = 100
+importance_2 = {
+    CHR: 1,
+    HR: 2,
+    SUBJ: 1,
+    LURK: 0,
+}
+const min_2 = 90
+importance_3 = {
+    CHR: 1,
+    HR: 2,
+    SUBJ: 1,
+    LURK: 0,
+}
+const min_3 = 100
+const ordered_bids = fairmarket_ordering(["CHR", "HR", "SUBJ"], [
+    chrony(importance_1, min_1),
+    chrony(importance_1, min_1),
+    highroller(importance_1, min_1),
+    highroller(importance_1, min_1),
+    subjective(importance_1, min_1),
+    subjective(importance_1, min_1),
+    lurker(importance_1, min_1),
+    lurker(importance_1, min_1),
+    chrony(importance_2, min_2),
+    chrony(importance_2, min_2),
+    highroller(importance_2, min_2),
+    highroller(importance_2, min_2),
+    subjective(importance_2, min_2),
+    subjective(importance_2, min_2),
+    lurker(importance_2, min_2),
+    lurker(importance_2, min_2),
+    // chrony(importance_3, min_3),
+    // chrony(importance_3, min_3),
+    // highroller(importance_3, min_3),
+    // highroller(importance_3, min_3),
+    // subjective(importance_3, min_3),
+    // subjective(importance_3, min_3),
+    // lurker(importance_3, min_3),
+    // lurker(importance_3, min_3),
+])
+// console.log(ordered_bids)
+console.log(ordered_bids.map((bid) => bid_type(bid, bid.min)))
