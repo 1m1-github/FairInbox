@@ -49,19 +49,32 @@ export function addSettingsButton() {
 
 // send
 export function addSendButton() {
+    const B = document.createElement("input");
+    B.setAttribute("placeholder", "To")
+    document.body.appendChild(B);
+    const currency_amount = document.createElement("input");
+    currency_amount.setAttribute("placeholder", "currency amount")
+    document.body.appendChild(currency_amount);
+    const currency_id = document.createElement("input");
+    currency_id.setAttribute("placeholder", "currency id")
+    document.body.appendChild(currency_id);
+    const data = document.createElement("input");
+    data.setAttribute("placeholder", "msg")
+    document.body.appendChild(data);
     const button = document.createElement("button");
     document.body.appendChild(button);
     button.innerHTML = "send"
     button.addEventListener("click", (event) => {
         console.log("addCreateBidButton", peraWallet.isConnected)
         if (!user) return
-        let A = "HQMMGGF3KJRPTEZV6GKGT6PNQJBZWUBIQMHG4XBVGBIV2E2V4LWOFHVEAA"
-        let B = A
-        // let B = "5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU"
-        let currency_amount = 2
-        let currency_id = 10458941
-        let data = "hi"
-        return send(B, currency_id, currency_amount, data)
+        // let A = "HQMMGGF3KJRPTEZV6GKGT6PNQJBZWUBIQMHG4XBVGBIV2E2V4LWOFHVEAA"
+        // let B = A
+        // // let B = "5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU"
+        // let currency_amount = 2
+        // let currency_id = 10458941
+        // let data = "hi"
+        console.log("B", B.value)
+        return send(B.value, Number(currency_id.value), Number(currency_amount.value), data.value)
     });
 }
 
