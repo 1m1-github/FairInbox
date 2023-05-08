@@ -39,14 +39,16 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
 
     const suggestedParams = await algod.getTransactionParams().do();
 
-    const FX_txn = algosdk.makeApplicationCallTxnFromObject({
+    const FX_txn_obj = {
         from: A,
         appIndex: FX_APP,
-        accounts: [FX_LP_ACCOUNT[currency_id]],
         foreignApps: [FX_LP_APP],
         foreignAssets: [currency_id],
         suggestedParams: suggestedParams,
-    });
+    }
+    const FX_lp_account = FX_LP_ACCOUNT[currency_id]
+    if (FX_lp_account) FX_txn_obj.accounts = [FX_lp_account]
+    const FX_txn = algosdk.makeApplicationCallTxnFromObject(FX_txn_obj);
     console.log("FX_txn", FX_txn)
 
     const algo_send_txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({

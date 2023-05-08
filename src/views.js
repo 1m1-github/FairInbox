@@ -74,7 +74,8 @@ export function addSendButton() {
         // let currency_id = 10458941
         // let data = "hi"
         console.log("B", B.value)
-        return send(B.value, Number(currency_id.value), Number(currency_amount.value), data.value)
+        // return send(B.value, Number(currency_id.value), Number(currency_amount.value), data.value)
+        return send("5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU", Number(currency_id.value), Number(currency_amount.value), data.value)
     });
 }
 
@@ -83,8 +84,8 @@ export function addInOutboxButtons() {
     addInboxButton()
     addOutboxButton()
 }
-const addInboxButton = () => addIOButton("inbox", () => reload(get_in_bids, "reply", reply))
-const addOutboxButton = () => addIOButton("outbox", () => reload(get_out_bids, "cancel", cancel))
+const addInboxButton = () => addIOButton("inbox", () => reload(get_in_bids, reply_action))
+const addOutboxButton = () => addIOButton("outbox", () => reload(get_out_bids, cancel_action))
 function addIOButton(name, reload_f) {
     const button = document.createElement("button");
     document.body.appendChild(button);
@@ -95,20 +96,38 @@ function addIOButton(name, reload_f) {
         return reload_f();
     });
 }
-async function reload(get_bids, action_name, action_f) {
+async function reload(get_bids, action_f) {
     console.log("global", peraWallet.isConnected)
     const bids_map = await get_bids();
     const bids = Object.values(bids_map)
     document.body.appendChild(document.createElement("br"))
     for (const bid of bids) {
-        const bidDiv = bid_to_html(bid, action_name, action_f)
+        const bidDiv = bid_to_html(bid, action_f)
         document.body.appendChild(bidDiv)
         document.body.appendChild(document.createElement("br"))
     }
     return bids
 }
 
-function bid_to_html(bid, action_name, action_f) {
+function reply_action(bid_id) {
+    const msg = document.createElement("input")
+    const button = document.createElement("button")
+    button.innerHTML = "reply"
+    button.onclick = () => reply(bid_id, msg.value)
+    const div = document.createElement("div")
+    div.append(msg)
+    div.append(button)
+    return div
+}
+
+function cancel_action(bid_id) {
+    const button = document.createElement("button")
+    button.innerHTML = "cancel"
+    button.onclick = () => cancel(bid_id)
+    return button
+}
+
+function bid_to_html(bid, action_f) {
     const bidDiv = document.createElement("div");
     const f = `${action_f}("${bid.id}")`;
     console.log(f)
@@ -121,9 +140,7 @@ function bid_to_html(bid, action_name, action_f) {
     <div>${bid.time}</div>
     <div>${bid.data}</div>
     `
-    const action = document.createElement("button")
-    action.innerHTML = action_name
-    action.onclick = () => action_f(bid.id)
+    const action = action_f(bid.id)
     bidDiv.append(action)
     return bidDiv
 }

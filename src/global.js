@@ -29,8 +29,8 @@ export const algod = new algosdk.Algodv2(token, baseServerAlgod, port);
 
 // vars
 export let user = "";
-export let bid_ins = {};
-export let bid_outs = {};
+export let bid_ins = [];
+export let bid_outs = [];
 
 export const peraWallet = new PeraWalletConnect();
 console.log("global", peraWallet.isConnected)
@@ -80,4 +80,11 @@ for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
 }
+}
+
+export function find_bid_by_id(bids, bid_id) {
+    for (const bid of bids) {
+        if (bid.id == bid_id) return bid
+    }
+    throw new Error("find_bid_in")
 }

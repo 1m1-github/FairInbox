@@ -25,9 +25,9 @@ export async function get_in_bids() {
         .do();
     console.log(transactionInfo);
     const bid_ins_array = await get_bids(transactionInfo);
-    bid_ins = array_to_map(bid_ins_array)
+    const bid_ins_map = array_to_map(bid_ins_array)
     const historical_types = [] // assume no history for now...TODO
-    bid_ins = fairmarket_ordering(historical_types, Object.values(bid_ins))
+    bid_ins = fairmarket_ordering(historical_types, Object.values(bid_ins_map))
     return bid_ins;
 }
 
@@ -42,7 +42,9 @@ export async function get_out_bids() {
         .do();
     console.log(transactionInfo);
     const bid_outs_array = await get_bids(transactionInfo);
-    bid_outs = array_to_map(bid_outs_array)
+    const bid_outs_map = array_to_map(bid_outs_array)
+    const historical_types = [] // assume no history for now...TODO
+    bid_outs = fairmarket_ordering(historical_types, Object.values(bid_outs_map))
     return bid_outs;
 }
 
