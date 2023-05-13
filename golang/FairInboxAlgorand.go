@@ -51,12 +51,15 @@ import (
 
 // tinygo build -o wasm.wasm -target wasm ./FairInboxAlgorand.go
 func main() {
-	encoding_decoding()
+	// encoding_decoding()
 	// fmt.Println("main")
+	// printlog("KKIVEIX6TEL32KM2TIYPSVMA3CEIY3IM4M3HBGSNYXIJMYSQD6HQ")
+	// log_to_int("AAAAAAAAA");
 }
 
-func f(x int) int {
-	return 2*x
+func log_to_int(s string) uint64 {
+	x,_:=base64.StdEncoding.DecodeString(s)
+	return binary.BigEndian.Uint64(x)
 }
 
 // func encryption() {
