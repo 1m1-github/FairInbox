@@ -49,7 +49,7 @@ import (
 	// "golang.org/x/crypto/nacl/box"
 )
 
-// tinygo build -o wasm.wasm -target wasm ./FairInboxAlgorand.go
+// tinygo build -o test.wasm -target wasm ./FairInboxAlgorand.go
 func main() {
 	// encoding_decoding()
 	// fmt.Println("main")
