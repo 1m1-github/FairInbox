@@ -71,12 +71,31 @@ Some parts needed for Algorand and encoding/decoding do not compile in TinyGo. R
 `npx webpack`
 `./node_modules/.bin/http-server -a localhost dist`
 `npx webpack && ./node_modules/.bin/http-server -a localhost dist`
+build to wasm:
+tinygo build -o test.wasm -target wasm ./FairInboxAlgorand.go
+need cmd to serve wasm+html+js
+a golang module with multiple packages that builds to wasm+html+js
+tests to run. no main.
+(future) CI: push wasm+html+js to ipfs and change ipns
 
 ## Security
 The off-DLT code contains vanilla js and html only (future: use WASM instead of js). No js frameworks or libs are used besides the DLT sdk, js-sha512 and the wallet connector sdk. This minimizes the risk of injecting malicious code.
 
 ## Learned subjective internal ordering using LLMs
 As the theory asks, we choose the learning algorithm (information) as an LLM because our data consists of text. LLMs can understand, given enough examples, and with privacy (your own LLM) that a user can choose this forecasted strategy vs random, which gives a partial ordering overall
+
+## Design
+golang -> WASM -> IPFS -> IPNS
+
+user:
+IPNS -> WASM -> WASM runtime -> API -> ACTION -> VIEW
+
+action:
+API -> DLT
+
+views:
+WASM -> HTML
+WASM -> ???
 
 ## Stream
 Dev of the project was/is streamed best-effort: https://www.youtube.com/@1m1-yt/streams
