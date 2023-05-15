@@ -72,7 +72,7 @@ Some parts needed for Algorand and encoding/decoding do not compile in TinyGo. R
 `./node_modules/.bin/http-server -a localhost dist`
 `npx webpack && ./node_modules/.bin/http-server -a localhost dist`
 build to wasm:
-tinygo build -o test.wasm -target wasm ./FairInboxAlgorand.go
+tinygo build -o ./dist/FairInbox.wasm -target wasm .
 need cmd to serve wasm+html+js
 a golang module with multiple packages that builds to wasm+html+js
 tests to run. no main.
