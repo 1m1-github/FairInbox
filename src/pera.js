@@ -1,5 +1,5 @@
 import { user, peraWallet } from "./global"
-import { addLoggedInView, connectButton } from "./views"
+import { addLoggedInView, loginButton } from "./views"
 
 export function reconnectSession() {
     console.log("reconnectSession", peraWallet.isConnected)
@@ -13,7 +13,7 @@ export function reconnectSession() {
                 user = accounts[0];
             }
 
-            connectButton.innerHTML = "logout";
+            loginButton.innerHTML = "logout";
         })
         .catch((e) => console.log(e));
 }
@@ -29,7 +29,7 @@ export function handleConnectWalletClick(event) {
             console.log("handleConnectWalletClick 2", peraWallet.isConnected)
             user = newAccounts[0];
 
-            connectButton.innerHTML = "logout";
+            loginButton.innerHTML = "logout";
             
             console.log('user', user)
 
@@ -52,5 +52,5 @@ export function handleDisconnectWalletClick(event) {
     });
 
     user = "";
-    connectButton.innerHTML = "login";
+    loginButton.innerHTML = "login";
 }
