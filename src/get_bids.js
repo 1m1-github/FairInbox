@@ -72,7 +72,7 @@ async function bid_from_txn(txn) {
 
     const bid_uint8 = await get_box(bid_id_uint8)
     console.log("bid_uint8", bid_uint8)
-    if (!bid_id_uint8) return null
+    if (!bid_uint8) return null
 
     let counter = 0
     const INT_LENGTH = 8

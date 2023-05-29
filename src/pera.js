@@ -9,12 +9,11 @@ export function reconnectSession() {
         .then((accounts) => {
             peraWallet.connector?.on("disconnect", handleDisconnectWalletClick);
             console.log("reconnectSession 2", peraWallet.isConnected)
-            if (accounts.length) {
+            if (peraWallet.isConnected && accounts.length) {
                 user = accounts[0];
                 addLoggedInView()
+                loginButton.innerHTML = "logout";
             }
-
-            loginButton.innerHTML = "logout";
         })
         .catch((e) => console.log(e));
 }
