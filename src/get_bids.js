@@ -53,12 +53,8 @@ async function get_bids(transactionInfo) {
     for (const txn of transactionInfo.transactions) {
         // const txn = transactionInfo.transactions[0]
         // console.log("txn", txn)
-        try {
-            const bid = await bid_from_txn(txn)
-            bids.push(bid)
-        } catch (e) {
-            console.error(e)
-        }
+        const bid = await bid_from_txn(txn)
+        if (bid) bids.push(bid)
     }
     console.log(bids);
     return bids;
@@ -76,6 +72,7 @@ async function bid_from_txn(txn) {
 
     const bid_uint8 = await get_box(bid_id_uint8)
     console.log("bid_uint8", bid_uint8)
+    if (!bid_id_uint8) return null
 
     let counter = 0
     const INT_LENGTH = 8

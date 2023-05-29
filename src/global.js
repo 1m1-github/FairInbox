@@ -37,7 +37,7 @@ export const peraWallet = new PeraWalletConnect();
 console.log("global", peraWallet.isConnected)
 
 // utils
-export const b64_to_uint8array = (a) => Uint8Array(atob(a).split("").map((c) => c.charCodeAt(0)));
+export const b64_to_uint8array = (a) => new Uint8Array(atob(a).split("").map((c) => c.charCodeAt(0)));
 
 export function uint8ArrayToBase64(uint8Array) {
     return new Promise((resolve, reject) => {
