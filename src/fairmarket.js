@@ -351,8 +351,8 @@ const delta = (vec1, vec2) => Math.sqrt((vec1[0] - vec2[0]) ** 2 + (vec1[1] - ve
 // const CHRONY_PRECISION = 0
 // function shuffle(array) {
 //     for (let i = array.length - 1; i > 0; i--) {
-//         const j = Math.floor(Math.random() * (i + 1));
-//         [array[i], array[j]] = [array[j], array[i]];
+//         const j = Math.floor(Math.random() * (i + 1))
+//         [array[i], array[j]] = [array[j], array[i]]
 //     }
 // }
 

@@ -7,29 +7,29 @@ export function reconnectSession() {
     peraWallet
         .reconnectSession()
         .then((accounts) => {
-            peraWallet.connector?.on("disconnect", handleDisconnectWalletClick);
+            peraWallet.connector?.on("disconnect", handleDisconnectWalletClick)
             console.log("reconnectSession 2", peraWallet.isConnected)
             if (peraWallet.isConnected && accounts.length) {
-                user = accounts[0];
+                user = accounts[0]
                 addLoggedInView()
-                loginButton.innerHTML = "logout";
+                loginButton.innerHTML = "logout"
             }
         })
-        .catch((e) => console.log(e));
+        .catch((e) => console.log(e))
 }
 
 export function handleConnectWalletClick(event) {
-    event.preventDefault();
+    event.preventDefault()
     console.log("handleConnectWalletClick", peraWallet.isConnected)
 
     peraWallet
         .connect()
         .then((newAccounts) => {
-            peraWallet.connector.on("disconnect", handleDisconnectWalletClick);
+            peraWallet.connector.on("disconnect", handleDisconnectWalletClick)
             console.log("handleConnectWalletClick 2", peraWallet.isConnected)
-            user = newAccounts[0];
+            user = newAccounts[0]
 
-            loginButton.innerHTML = "logout";
+            loginButton.innerHTML = "logout"
             
             console.log('user', user)
 
@@ -38,19 +38,19 @@ export function handleConnectWalletClick(event) {
         })
         .catch((error) => {
             if (error?.data?.type !== "CONNECT_MODAL_CLOSED") {
-                console.log(error);
+                console.log(error)
             }
-        });
+        })
 }
 
 export function handleDisconnectWalletClick(event) {
-    event.preventDefault();
+    event.preventDefault()
     console.log("handleDisconnectWalletClick", peraWallet.isConnected)
     peraWallet.disconnect().catch((error) => {
-        console.log(error);
+        console.log(error)
         console.log("handleDisconnectWalletClick 2", peraWallet.isConnected)
-    });
+    })
 
-    user = "";
-    loginButton.innerHTML = "login";
+    user = ""
+    loginButton.innerHTML = "login"
 }

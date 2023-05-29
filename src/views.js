@@ -11,7 +11,7 @@ export function init() {
     if (user) addLoggedInView()
 }
 
-export const loginButton = document.createElement("button");
+export const loginButton = document.createElement("button")
 
 export async function addLoggedInView() {
     await addSendButton()
@@ -21,24 +21,24 @@ export async function addLoggedInView() {
 
 // login
 function addLoginButton() {
-    document.body.appendChild(loginButton);
+    document.body.appendChild(loginButton)
     loginButton.id = "loginbutton"
     loginButton.classList = "button"
     loginButton.innerHTML = "login"
-    document.addEventListener("DOMContentLoaded", reconnectSession());
+    document.addEventListener("DOMContentLoaded", reconnectSession())
     loginButton.addEventListener("click", (event) => {
         if (user) {
-            handleDisconnectWalletClick(event);
+            handleDisconnectWalletClick(event)
         } else {
-            handleConnectWalletClick(event);
+            handleConnectWalletClick(event)
         }
-    });
+    })
 }
 
 // settings
 export function addParamsButton() {
-    const button = document.createElement("button");
-    document.body.appendChild(button);
+    const button = document.createElement("button")
+    document.body.appendChild(button)
     button.innerHTML = "params"
     button.id = "params_button"
     button.classList = "button"
@@ -49,11 +49,11 @@ export function addParamsButton() {
         const params = await get_params()
         console.log("addParamsButton, params", params)
 
-        const params_div = document.createElement("div");
+        const params_div = document.createElement("div")
         params_div.id = "params"
         params_div.classList = "params"
 
-        const chrony_importance_input = document.createElement("input");
+        const chrony_importance_input = document.createElement("input")
         chrony_importance_input.id = "chrony_importance_input"
         chrony_importance_input.classList = "params importance int"
         chrony_importance_input.setAttribute("placeholder", "chrony importance")
@@ -61,7 +61,7 @@ export function addParamsButton() {
         chrony_importance_input.value = params["chrony_importance"]
         params_div.appendChild(chrony_importance_input)
 
-        const highroller_importance_input = document.createElement("input");
+        const highroller_importance_input = document.createElement("input")
         highroller_importance_input.id = "highroller_importance_input"
         highroller_importance_input.classList = "params importance int"
         highroller_importance_input.setAttribute("placeholder", "highroller importance")
@@ -69,7 +69,7 @@ export function addParamsButton() {
         highroller_importance_input.value = params["highroller_importance"]
         params_div.appendChild(highroller_importance_input)
 
-        const subjective_importance_input = document.createElement("input");
+        const subjective_importance_input = document.createElement("input")
         subjective_importance_input.id = "subjective_importance_input"
         subjective_importance_input.classList = "params importance int"
         subjective_importance_input.setAttribute("placeholder", "subjective importance")
@@ -77,7 +77,7 @@ export function addParamsButton() {
         subjective_importance_input.value = params["subjective_importance"]
         params_div.appendChild(subjective_importance_input)
 
-        const min_input = document.createElement("input");
+        const min_input = document.createElement("input")
         min_input.id = "min_input"
         min_input.classList = "params min int"
         min_input.setAttribute("placeholder", "min")
@@ -85,7 +85,7 @@ export function addParamsButton() {
         min_input.value = params["min"]
         params_div.appendChild(min_input)
 
-        const update_params_button = document.createElement("button");
+        const update_params_button = document.createElement("button")
         update_params_button.id = "update_params_button"
         update_params_button.classList = "button params"
         update_params_button.innerHTML = "update params"
@@ -98,36 +98,36 @@ export function addParamsButton() {
         })
         params_div.appendChild(update_params_button)
 
-        document.body.appendChild(params_div);
-    });
+        document.body.appendChild(params_div)
+    })
 }
 
 // send
 export function addSendButton() {
-    const B = document.createElement("input");
+    const B = document.createElement("input")
     B.id = "send_B"
     B.classList = "input addr"
     B.setAttribute("placeholder", "To")
-    document.body.appendChild(B);
-    const currency_amount = document.createElement("input");
+    document.body.appendChild(B)
+    const currency_amount = document.createElement("input")
     currency_amount.id = "send_currency_amount"
     currency_amount.classList = "input int"
     currency_amount.setAttribute("placeholder", "currency amount")
-    document.body.appendChild(currency_amount);
-    const currency_id = document.createElement("input");
+    document.body.appendChild(currency_amount)
+    const currency_id = document.createElement("input")
     currency_id.id = "send_currency_id"
     currency_id.classList = "input int"
     currency_id.setAttribute("placeholder", "currency id")
-    document.body.appendChild(currency_id);
-    const data = document.createElement("input");
+    document.body.appendChild(currency_id)
+    const data = document.createElement("input")
     data.id = "send_data"
     data.classList = "input str"
     data.setAttribute("placeholder", "msg")
-    document.body.appendChild(data);
-    const button = document.createElement("button");
+    document.body.appendChild(data)
+    const button = document.createElement("button")
     button.id = "send_button"
     button.classList = "button"
-    document.body.appendChild(button);
+    document.body.appendChild(button)
     button.innerHTML = "send"
     button.addEventListener("click", (event) => {
         console.log("addCreateBidButton", peraWallet.isConnected)
@@ -141,7 +141,7 @@ export function addSendButton() {
         console.log("B", B.value)
         // return send(B.value, Number(currency_id.value), Number(currency_amount.value), data.value)
         return send("5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU", Number(currency_id.value), Number(currency_amount.value), data.value)
-    });
+    })
 }
 
 // iobox
@@ -152,20 +152,20 @@ export function addInOutboxButtons() {
 const addInboxButton = () => addIOButton("inbox", () => reload(get_in_bids, reply_action))
 const addOutboxButton = () => addIOButton("outbox", () => reload(get_out_bids, cancel_action))
 function addIOButton(name, reload_f) {
-    const button = document.createElement("button");
+    const button = document.createElement("button")
     button.id = `${name}_button`
     button.classList = "button"
-    document.body.appendChild(button);
+    document.body.appendChild(button)
     button.innerHTML = name
     button.addEventListener("click", (event) => {
         console.log("global", peraWallet.isConnected)
         if (!user) return
-        return reload_f();
-    });
+        return reload_f()
+    })
 }
 async function reload(get_bids, action_f) {
     console.log("global", peraWallet.isConnected)
-    const bids_map = await get_bids();
+    const bids_map = await get_bids()
     const bids = Object.values(bids_map)
     document.body.appendChild(document.createElement("br"))
     for (const bid of bids) {
@@ -203,10 +203,10 @@ function cancel_action(bid_id) {
 }
 
 function bid_to_html(bid, action_f) {
-    const bidDiv = document.createElement("div");
+    const bidDiv = document.createElement("div")
     bidDiv.id = bid.id
     bidDiv.classList = "bid"
-    const f = `${action_f}("${bid.id}")`;
+    const f = `${action_f}("${bid.id}")`
     console.log(f)
     bidDiv.innerHTML = `
     <div id=${bid.id}_A class="A addr">${bid.A}</div>

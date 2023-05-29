@@ -22,7 +22,7 @@ async function calc_bid_id(A, B, currency_id, currency_amount, data) {
     console.log(currency_id_bytes)
     const currency_amount_bytes = algosdk.bigIntToBytes(currency_amount, 8)
     console.log(currency_amount_bytes)
-    const enc = new TextEncoder();
+    const enc = new TextEncoder()
     const data_bytes = enc.encode(data)
     console.log(data_bytes)
     const all_bytes = [...A_addr.publicKey, ...B_addr.publicKey, ...currency_id_bytes, ...currency_amount_bytes, ...data_bytes]
@@ -37,7 +37,7 @@ async function calc_bid_id(A, B, currency_id, currency_amount, data) {
 async function create_bid(A, B, currency_id, currency_amount, data) {
     console.log("create_bid", A, B, currency_id, currency_amount, data)
 
-    const suggestedParams = await algod.getTransactionParams().do();
+    const suggestedParams = await algod.getTransactionParams().do()
 
     const FX_txn_obj = {
         from: A,
@@ -48,7 +48,7 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
     }
     const FX_lp_account = FX_LP_ACCOUNT[currency_id]
     if (FX_lp_account) FX_txn_obj.accounts = [FX_lp_account]
-    const FX_txn = algosdk.makeApplicationCallTxnFromObject(FX_txn_obj);
+    const FX_txn = algosdk.makeApplicationCallTxnFromObject(FX_txn_obj)
     console.log("FX_txn", FX_txn)
 
     const algo_send_txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
@@ -56,10 +56,10 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
         to: FAIRMARKET_ACCOUNT,
         amount: SEND_ALGO_AMOUNT,
         suggestedParams: suggestedParams,
-    });
+    })
     console.log("algo_send", algo_send_txn)
 
-    const encoder = new TextEncoder();
+    const encoder = new TextEncoder()
     const arg0 = encoder.encode("create_bid")
     const arg1 = algosdk.decodeAddress(B).publicKey
     const bid_id = await calc_bid_id(A, B, currency_id, currency_amount, data)
@@ -79,7 +79,7 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
         boxes: [box0, box1],
         note: note_bytes,
         suggestedParams: suggestedParamsAppCall,
-    });
+    })
     console.log("app_call", app_call_txn)
 
     const asset_send_txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
@@ -88,7 +88,7 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
         assetIndex: currency_id,
         amount: currency_amount,
         suggestedParams: suggestedParams,
-    });
+    })
     console.log("asset_send", asset_send_txn)
 
     return sign_and_send([FX_txn, algo_send_txn, asset_send_txn, app_call_txn], A)

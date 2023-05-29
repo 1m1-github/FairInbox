@@ -1,5 +1,5 @@
 import { get_box, indexer, algod, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet, MIN_ROUND, b64_to_uint8array } from "./global"
-import algosdk from "algosdk";
+import algosdk from "algosdk"
 import { fairmarket_ordering } from "./fairmarket"
 
 function array_to_map(bids_array) {
@@ -15,20 +15,20 @@ export async function get_in_bids() {
     // const transactionInfo = await indexerClient
     //     .searchForTransactions()
     //     .txid("QPDRSHL44EU3WMLZKUD7QLMECWJ3HNKOJYQHSEPJIHLUVYN3CG6Q")
-    //     .do();
+    //     .do()
     const transactionInfo = await indexer
         .searchForTransactions()
         .minRound(MIN_ROUND)
         .applicationID(FAIRMARKET_APP)
         .txType("appl")
         .notePrefix(btoa(`${user}.`))
-        .do();
-    console.log(transactionInfo);
-    const bid_ins_array = await get_bids(transactionInfo);
+        .do()
+    console.log(transactionInfo)
+    const bid_ins_array = await get_bids(transactionInfo)
     const bid_ins_map = array_to_map(bid_ins_array)
     const historical_types = [] // assume no history for now...TODO
     bid_ins = fairmarket_ordering(historical_types, Object.values(bid_ins_map))
-    return bid_ins;
+    return bid_ins
 }
 
 export async function get_out_bids() {
@@ -39,13 +39,13 @@ export async function get_out_bids() {
         .address(user)
         .addressRole("sender")
         .txType("appl")
-        .do();
-    console.log(transactionInfo);
-    const bid_outs_array = await get_bids(transactionInfo);
+        .do()
+    console.log(transactionInfo)
+    const bid_outs_array = await get_bids(transactionInfo)
     const bid_outs_map = array_to_map(bid_outs_array)
     const historical_types = [] // assume no history for now...TODO
     bid_outs = fairmarket_ordering(historical_types, Object.values(bid_outs_map))
-    return bid_outs;
+    return bid_outs
 }
 
 async function get_bids(transactionInfo) {
@@ -56,16 +56,16 @@ async function get_bids(transactionInfo) {
         const bid = await bid_from_txn(txn)
         if (bid) bids.push(bid)
     }
-    console.log(bids);
-    return bids;
+    console.log(bids)
+    return bids
 }
 
 async function bid_from_txn(txn) {
     // console.log(txn)
     // console.log(txn["application-transaction"])
     // console.log(txn["application-transaction"]["application-args"])
-    const args = txn["application-transaction"]["application-args"];
-    const bid_id = args[args.length - 1];
+    const args = txn["application-transaction"]["application-args"]
+    const bid_id = args[args.length - 1]
     console.log("bid_id", bid_id)
     if (!bid_id) return null
     const bid_id_uint8 = b64_to_uint8array(bid_id)

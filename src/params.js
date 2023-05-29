@@ -1,6 +1,6 @@
 // goal app call --from $B --app-id $FAIRMARKET_APP --app-arg "str:update_params" --app-arg $CHRONY_IMPORTANCE --app-arg $HIGHROLLER_IMPORTANCE --app-arg $SUBJECTIVE_IMPORTANCE --app-arg $MIN --app-arg $DESCRIPTION --app-arg $ENCRYPTION_PUBLIC_KEY --box "addr:$B"
 
-import algosdk, { bigIntToBytes } from "algosdk";
+import algosdk, { bigIntToBytes } from "algosdk"
 import { CREATE_PARAMS_ALGO_AMOUNT, FAIRMARKET_ACCOUNT, algod, user, FAIRMARKET_APP, get_box, sign_and_send } from "./global"
 
 export async function get_params() {
@@ -67,7 +67,7 @@ export async function update_params(chrony_importance, highroller_importance, su
         txns.push(algo_send_txn)
     }
 
-    const encoder = new TextEncoder();
+    const encoder = new TextEncoder()
     const arg0 = encoder.encode("update_params")
     const arg1 = bigIntToBytes(chrony_importance, 8)
     const arg2 = bigIntToBytes(highroller_importance, 8)
@@ -82,7 +82,7 @@ export async function update_params(chrony_importance, highroller_importance, su
         appArgs: [arg0, arg1, arg2, arg3, arg4, arg5, arg6],
         boxes: [box0],
         suggestedParams: suggestedParams,
-    });
+    })
     txns.push(update_txn)
     console.log("update_txn", update_txn)
 
