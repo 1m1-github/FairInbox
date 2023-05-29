@@ -13,7 +13,7 @@ export const FX_LP_ACCOUNT = {
     21582981: "DNPVHOLSYCBDA6UAB3MREZN6W4MZZV4OL227B5ABABQTHCJFMLD345JPXE",
 }
 
-export const SEND_ALGO = 268900
+export const SEND_ALGO_AMOUNT = 268900
 
 export const MIN_ROUND = 29287438
 
@@ -36,7 +36,7 @@ export const peraWallet = new PeraWalletConnect();
 console.log("global", peraWallet.isConnected)
 
 // utils
-export const b64_to_uint8array = (a) => new Uint8Array(atob(a).split("").map(function(c) {return c.charCodeAt(0); }));
+export const b64_to_uint8array = (a) => Uint8Array(atob(a).split("").map((c) => c.charCodeAt(0)));
 
 export function uint8ArrayToBase64(uint8Array) {
     return new Promise((resolve, reject) => {
@@ -87,4 +87,13 @@ export function find_bid_by_id(bids, bid_id) {
         if (bid.id == bid_id) return bid
     }
     throw new Error("find_bid_in")
+}
+
+export async function get_box(box_id) {
+    try {
+        const boxResponse = await algod.getApplicationBoxByName(FAIRMARKET_APP, box_id).do();
+        return boxResponse.value
+    } catch (e) {
+        return null
+    }
 }

@@ -11,6 +11,7 @@ export function reconnectSession() {
             console.log("reconnectSession 2", peraWallet.isConnected)
             if (accounts.length) {
                 user = accounts[0];
+                addLoggedInView()
             }
 
             loginButton.innerHTML = "logout";

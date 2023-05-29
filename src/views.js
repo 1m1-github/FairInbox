@@ -4,13 +4,11 @@ import { get_in_bids, get_out_bids } from "./get_bids.js"
 import { cancel } from "./cancel_bid.js"
 import { reply } from "./trade.js"
 import { send } from "./create_bid.js"
-import { update_params } from "./update_params.js"
+import { get_params, update_params } from "./params.js"
 
 export function init() {
     addLoginButton()
-
-    // DEBUG
-    addLoggedInView()
+    if (user) addLoggedInView()
 }
 
 export const loginButton = document.createElement("button");
@@ -18,15 +16,15 @@ export const loginButton = document.createElement("button");
 export async function addLoggedInView() {
     await addSendButton()
     await addInOutboxButtons()
-    await addSettingsButton()
+    await addParamsButton()
 }
 
 // login
 function addLoginButton() {
     document.body.appendChild(loginButton);
-    loginButton.innerHTML = "login"
     loginButton.id = "loginbutton"
     loginButton.classList = "button"
+    loginButton.innerHTML = "login"
     document.addEventListener("DOMContentLoaded", reconnectSession());
     loginButton.addEventListener("click", (event) => {
         if (user) {
@@ -38,16 +36,69 @@ function addLoginButton() {
 }
 
 // settings
-export function addSettingsButton() {
+export function addParamsButton() {
     const button = document.createElement("button");
     document.body.appendChild(button);
-    button.innerHTML = "settings"
-    button.id = "settingsbutton"
+    button.innerHTML = "params"
+    button.id = "params_button"
     button.classList = "button"
-    button.addEventListener("click", (event) => {
-        console.log("addSettingsButton", peraWallet.isConnected)
+    button.addEventListener("click", async (event) => {
+        console.log("addParamsButton", peraWallet.isConnected)
         if (!user) return
-        // TODO show settings and allow update
+        
+        const params = await get_params()
+        console.log("addParamsButton, params", params)
+
+        const params_div = document.createElement("div");
+        params_div.id = "params"
+        params_div.classList = "params"
+
+        const chrony_importance_input = document.createElement("input");
+        chrony_importance_input.id = "chrony_importance_input"
+        chrony_importance_input.classList = "params importance int"
+        chrony_importance_input.setAttribute("placeholder", "chrony importance")
+        chrony_importance_input.type = "number"
+        chrony_importance_input.value = params["chrony_importance"]
+        params_div.appendChild(chrony_importance_input)
+
+        const highroller_importance_input = document.createElement("input");
+        highroller_importance_input.id = "highroller_importance_input"
+        highroller_importance_input.classList = "params importance int"
+        highroller_importance_input.setAttribute("placeholder", "highroller importance")
+        highroller_importance_input.type = "number"
+        highroller_importance_input.value = params["highroller_importance"]
+        params_div.appendChild(highroller_importance_input)
+
+        const subjective_importance_input = document.createElement("input");
+        subjective_importance_input.id = "subjective_importance_input"
+        subjective_importance_input.classList = "params importance int"
+        subjective_importance_input.setAttribute("placeholder", "subjective importance")
+        subjective_importance_input.type = "number"
+        subjective_importance_input.value = params["subjective_importance"]
+        params_div.appendChild(subjective_importance_input)
+
+        const min_input = document.createElement("input");
+        min_input.id = "min_input"
+        min_input.classList = "params min int"
+        min_input.setAttribute("placeholder", "min")
+        min_input.type = "number"
+        min_input.value = params["min"]
+        params_div.appendChild(min_input)
+
+        const update_params_button = document.createElement("button");
+        update_params_button.id = "update_params_button"
+        update_params_button.classList = "button params"
+        update_params_button.innerHTML = "update params"
+        update_params_button.addEventListener("click", (event) => {
+            console.log("updateParamsButton", peraWallet.isConnected)
+            if (!user) return
+            const description = "00000000000000000000000000000000" // TODO
+            const encryption_public_key = "00000000000000000000000000000000" // TODO
+            return update_params(chrony_importance_input.value, highroller_importance_input.value, subjective_importance_input.value, min_input.value, description, encryption_public_key)
+        })
+        params_div.appendChild(update_params_button)
+
+        document.body.appendChild(params_div);
     });
 }
 

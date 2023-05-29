@@ -5,7 +5,7 @@
 // BID_ID = hash($A$B$CURRENCY_ID$CURRENCY_AMOUNT$NOTE)
 
 import algosdk from "algosdk"
-import { sign_and_send, user, algod, FAIRMARKET_ACCOUNT, FAIRMARKET_APP, SEND_ALGO, FX_APP, FX_LP_ACCOUNT, FX_LP_APP, peraWallet, uint8ArrayToBase64, b64_to_uint8array } from "./global.js"
+import { sign_and_send, user, algod, FAIRMARKET_ACCOUNT, FAIRMARKET_APP, SEND_ALGO_AMOUNT, FX_APP, FX_LP_ACCOUNT, FX_LP_APP, peraWallet, uint8ArrayToBase64, b64_to_uint8array } from "./global.js"
 import { sha512_256 } from "js-sha512"
 
 export function send(B, currency_id, currency_amount, data) {
@@ -54,7 +54,7 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
     const algo_send_txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
         from: A,
         to: FAIRMARKET_ACCOUNT,
-        amount: SEND_ALGO,
+        amount: SEND_ALGO_AMOUNT,
         suggestedParams: suggestedParams,
     });
     console.log("algo_send", algo_send_txn)

@@ -1,4 +1,4 @@
-import { indexer, algod, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet, MIN_ROUND } from "./global"
+import { get_box, indexer, algod, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet, MIN_ROUND, b64_to_uint8array } from "./global"
 import algosdk from "algosdk";
 import { fairmarket_ordering } from "./fairmarket"
 
@@ -71,11 +71,10 @@ async function bid_from_txn(txn) {
     const args = txn["application-transaction"]["application-args"];
     const bid_id = args[args.length - 1];
     console.log("bid_id", bid_id)
-    const bid_id_uint8 = new Uint8Array(atob(bid_id).split("").map(function (c) { return c.charCodeAt(0); }));
+    const bid_id_uint8 = b64_to_uint8array(bid_id)
     console.log("bid_id_uint8", bid_id_uint8)
 
-    const boxResponse = await algod.getApplicationBoxByName(FAIRMARKET_APP, bid_id_uint8).do();
-    const bid_uint8 = boxResponse.value;
+    const bid_uint8 = await get_box(bid_id_uint8)
     console.log("bid_uint8", bid_uint8)
 
     let counter = 0
