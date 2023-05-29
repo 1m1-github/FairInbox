@@ -67,6 +67,7 @@ async function bid_from_txn(txn) {
     const args = txn["application-transaction"]["application-args"];
     const bid_id = args[args.length - 1];
     console.log("bid_id", bid_id)
+    if (!bid_id) return null
     const bid_id_uint8 = b64_to_uint8array(bid_id)
     console.log("bid_id_uint8", bid_id_uint8)
 

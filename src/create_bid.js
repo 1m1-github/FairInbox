@@ -91,5 +91,5 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
     });
     console.log("asset_send", asset_send_txn)
 
-    return sign_and_send([FX_txn, algo_send_txn, app_call_txn, asset_send_txn], A)
+    return sign_and_send([FX_txn, algo_send_txn, asset_send_txn, app_call_txn], A)
 }
