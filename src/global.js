@@ -62,14 +62,14 @@ export async function sign_and_send(txns, signer) {
     const txnGroup = algosdk.assignGroupID(txns)
     console.log("txnGroup", txnGroup)
 
-    const txnGroupWithSigners = txnGroup.map((txn) => {return { txn: txn, signers: [signer] }})
+    const txnGroupWithSigners = txnGroup.map((txn) => { return { txn: txn, signers: [signer] } })
     console.log("txnGroupWithSigners", txnGroupWithSigners)
 
     try {
         const signedTxn = await peraWallet.signTransaction([txnGroupWithSigners])
         const result = await algod
-        .sendRawTransaction(signedTxn)
-        .do()
+            .sendRawTransaction(signedTxn)
+            .do()
         console.log("result", result)
     } catch (error) {
         console.log("cancel", error)
@@ -78,9 +78,9 @@ export async function sign_and_send(txns, signer) {
 
 export function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    [array[i], array[j]] = [array[j], array[i]]
-}
+        const j = Math.floor(Math.random() * (i + 1))
+        [array[i], array[j]] = [array[j], array[i]]
+    }
 }
 
 export function find_bid_by_id(bids, bid_id) {
