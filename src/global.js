@@ -14,6 +14,7 @@ export const FX_LP_ACCOUNT = {
 }
 
 export const SEND_ALGO_AMOUNT = 268900
+export const CREATE_PARAMS_ALGO_AMOUNT = 53700
 
 export const MIN_ROUND = 29287438
 
