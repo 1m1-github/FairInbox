@@ -1,4 +1,4 @@
-import { get_box, indexer, algod, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet, MIN_ROUND, b64_to_uint8array } from "./global"
+import { get_box, indexer, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet, MIN_ROUND, b64_to_uint8array } from "./global"
 import algosdk from "algosdk"
 import { fairmarket_ordering } from "./fairmarket"
 
@@ -27,7 +27,8 @@ export async function get_in_bids() {
     const bid_ins_array = await get_bids(transactionInfo)
     const bid_ins_map = array_to_map(bid_ins_array)
     const historical_types = [] // assume no history for now...TODO
-    bid_ins = fairmarket_ordering(historical_types, Object.values(bid_ins_map))
+    const bids = fairmarket_ordering(historical_types, Object.values(bid_ins_map))
+    bid_ins = bids["non_LURK"]
     return bid_ins
 }
 
@@ -40,11 +41,15 @@ export async function get_out_bids() {
         .addressRole("sender")
         .txType("appl")
         .do()
-    console.log(transactionInfo)
+    console.log("transactionInfo", transactionInfo)
     const bid_outs_array = await get_bids(transactionInfo)
+    console.log("bid_outs_array", bid_outs_array)
     const bid_outs_map = array_to_map(bid_outs_array)
+    console.log("bid_outs_map", bid_outs_map)
     const historical_types = [] // assume no history for now...TODO
-    bid_outs = fairmarket_ordering(historical_types, Object.values(bid_outs_map))
+    const bids = fairmarket_ordering(historical_types, Object.values(bid_outs_map))
+    console.log("bids", bids)
+    bid_outs = [...bids["non_LURK"], ...bids["LURK"]]
     return bid_outs
 }
 

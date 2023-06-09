@@ -69,19 +69,21 @@ function promote_LURK(current_block, ordered_LURK_bids, block_min) {
 }
 
 export function fairmarket_ordering(historical_types, bids) {
-    console.log("bids", bids)
+    console.log("fairmarket_ordering bids", bids)
     // order by time
-    bids = bids.sort((a, b) => a.time - b.time) // TODO check
+    bids = bids.sort((a, b) => Number(a.time) - Number(b.time)) // TODO check
+    console.log("bids after time sort", bids)
 
     // group by constant sequetial params
     const blocks = create_blocks(bids)
+    console.log("blocks", blocks)
 
     // order constant param groups
     const ordered_bids = []
     const ordered_LURK_bids = []
     for (let i = 0; i < blocks.length; i++) {
 
-        // console.log("i", i)
+        console.log("i", i)
 
         let current_block = blocks[i]
         const block_min = current_block[0].min
@@ -95,15 +97,25 @@ export function fairmarket_ordering(historical_types, bids) {
         }
 
         const { bids, bids_map } = fairmarket_ordering_given_constant_params(historical_types, current_block, block_min, block_importance)
+        console.log("bids after fairmarket_ordering_given_constant_params", bids)
+        console.log("bids_map after fairmarket_ordering_given_constant_params", bids_map)
         ordered_bids.push(...bids)
+        console.log("ordered_bids", ordered_bids)
 
         ordered_LURK_bids.push(...bids_map["LURK"])
+        console.log("ordered_LURK_bids", ordered_LURK_bids)
 
         historical_types.push(...ordered_bids) // TODO check
+        console.log("historical_types", historical_types)
     }
 
     // merge
-    return ordered_bids
+    const result = {
+        non_LURK: ordered_bids,
+        LURK: ordered_LURK_bids
+    }
+    console.log("result", result)
+    return result
 }
 
 // input: bids have same params and ordered by time
@@ -202,23 +214,26 @@ export function fairmarket_ordering(historical_types, bids) {
 
 function fairmarket_ordering_given_constant_params(historical_types, chronological_bids, block_min, block_importance) {
 
-    // console.log("chronological_bids", chronological_bids)
+    console.log("chronological_bids", chronological_bids)
 
     const block_decimal_importance = decimal_importance(block_importance)
+    console.log("block_decimal_importance", block_decimal_importance)
 
     // filtering
     const bids_map = create_bids_map(chronological_bids, block_min)
+    console.log("bids_map after create_bids_map", bids_map)
 
     // SUBJ - later apply learning algo ~ e.g. on special SUBJ bids where the data is text which is also the currency as an NFT representing a promise/contract which is stated in said text ~ an LLM could learn to mimick ones likes and dislikes, opening for the most open and fair human bartering market
     // for now, randomize, its the same as having a learning algo without data
     shuffle(bids_map["SUBJ"])
+    console.log("bids_map after shuffle", bids_map)
 
     // internal ordering of HR is by value
-    const value = (a) => a.currency_amount * a.fx_n / a.fx_d
+    const value = (a) => Number(a.currency_amount) * Number(a.fx_n) / Number(a.fx_d)
     bids_map["HR"].sort((a, b) => value(b) - value(a))
     bids_map["LURK"].sort((a, b) => value(b) - value(a))
     
-    // console.log("bids_map", bids_map)
+    console.log("fairmarket_ordering_given_constant_params bids_map", bids_map)
 
     const actual_importance = {
         CHR: 0,
@@ -228,7 +243,7 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
     }
     const history_length = Math.min(historical_types.length, importance_sum(block_importance) - 1)
     historical_types.slice(0, history_length).map(ht => actual_importance[ht]++)
-    // console.log("history_length", history_length)
+    console.log("history_length", history_length)
 
     const bids = []
     const indices = {
@@ -241,13 +256,13 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
     const num_non_LURK_bids = bids_map["CHR"].length + bids_map["HR"].length + bids_map["SUBJ"].length
     for (let i = 0; i < num_non_LURK_bids; i++) {
 
-        // console.log("i", i)
+        console.log("i", i)
 
         // simulation for each type
         let min_delta = Infinity
         let min_type = "CHR"
         for (const type of TYPES) {
-            // console.log("type", type)
+            console.log("type", type)
 
             // LURKERS are never part of its own bids block
             if (type == "LURK") continue
@@ -255,15 +270,15 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
             // nothing left
             if (bids_map[type].length == 0) continue
             if (indices[type] == bids_map[type].length) continue
-            // console.log("something left")
+            console.log("something left")
 
             // simulation of actual_importance change
             actual_importance[type]++
             const actual_decimal_importance = decimal_importance(actual_importance)
-            // console.log("actual_decimal_importance", actual_decimal_importance)
-            // console.log("target_decimal_importance", target_decimal_importance)
+            console.log("actual_decimal_importance", actual_decimal_importance)
+            console.log("block_importance", block_importance)
             const d = delta(actual_decimal_importance, block_decimal_importance)
-            // console.log("d", d)
+            console.log("d", d)
             if (d < min_delta) {
                 min_delta = d
                 min_type = type
@@ -286,11 +301,11 @@ function fairmarket_ordering_given_constant_params(historical_types, chronologic
             actual_importance[type_to_lose]--
         }
 
-        // console.log("actual_importances", actual_importances)
-        // console.log("min_delta", min_delta)
-        // console.log("min_type", min_type)
-        // console.log("indices", indices)
-        // console.log("bids", bids)
+        console.log("actual_importance", actual_importance)
+        console.log("min_delta", min_delta)
+        console.log("min_type", min_type)
+        console.log("indices", indices)
+        console.log("bids", bids)
     }
 
     return {
@@ -307,25 +322,25 @@ function create_bids_map(bids, block_min) {
         LURK: [],
     }
     for (const bid of bids) {
-        // console.log("bid", bid)
+        console.log("create_bids_map bid", bid)
         const type = bid_type(bid, block_min)
-        // console.log(bid.id, type)
+        console.log("create_bids_map bid.id, type", bid.id, type)
         bids_map[type].push(bid)
     }
     return bids_map
 }
 
 function bid_type(bid, min) {
-    // console.log("bid_type", bid.id, min)
+    console.log("bid_type, bid.id, min, bid.fx_d == 0, bid.fx_n == 0", bid.id, min, bid.fx_d == 0, bid.fx_n == 0)
     if (bid.fx_d == 0 && bid.fx_n == 0) return "SUBJ"
 
-    const value_in_base = bid.currency_amount * bid.fx_n / bid.fx_d
-    // console.log("bid_type, value_in_base", value_in_base)
+    const value_in_base = Number(bid.currency_amount) * Number(bid.fx_n) / Number(bid.fx_d)
+    console.log("bid_type, bid.currency_amount, bid.fx_n, bid.fx_d, bid.fx_n / bid.fx_d, value_in_base", bid.currency_amount, bid.fx_n, bid.fx_d, bid.fx_n / bid.fx_d, value_in_base)
 
     const upper_bound_CHRONY = Number(min) * Math.exp(CHRONY_PRECISION)
     const lower_bound_CHRONY = Number(min) * Math.exp(-CHRONY_PRECISION)
-    // console.log("bid_type, upper_bound_CHRONY", upper_bound_CHRONY)
-    // console.log("bid_type, lower_bound_CHRONY", lower_bound_CHRONY)
+    console.log("bid_type, upper_bound_CHRONY", upper_bound_CHRONY)
+    console.log("bid_type, lower_bound_CHRONY", lower_bound_CHRONY)
 
     if (value_in_base < lower_bound_CHRONY) return "LURK"
     if (value_in_base <= upper_bound_CHRONY) return "CHR"
