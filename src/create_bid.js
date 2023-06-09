@@ -38,6 +38,8 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
     console.log("create_bid", A, B, currency_id, currency_amount, data)
 
     const suggestedParams = await algod.getTransactionParams().do()
+    suggestedParams.flatFee = true
+    suggestedParams.fee = 0
 
     const FX_txn_obj = {
         from: A,
@@ -68,7 +70,7 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
     const box1 = { appIndex: FAIRMARKET_APP, name: arg1 }
     const suggestedParamsAppCall = { ...suggestedParams }
     suggestedParamsAppCall.flatFee = true
-    suggestedParamsAppCall.fee = 2000
+    suggestedParamsAppCall.fee = 5000
     const note = `${B}.${data}`
     const note_bytes = encoder.encode(note)
     const app_call_txn = algosdk.makeApplicationCallTxnFromObject({
@@ -91,5 +93,5 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
     })
     console.log("asset_send", asset_send_txn)
 
-    return sign_and_send([FX_txn, algo_send_txn, asset_send_txn, app_call_txn], A)
+    return sign_and_send([FX_txn, algo_send_txn, app_call_txn, asset_send_txn], A)
 }
