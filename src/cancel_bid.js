@@ -13,7 +13,7 @@ async function cancel_bid(A, bid_id, currency_id) {
     console.log("cancel_bid", A, bid_id, currency_id)
 
     const suggestedParams = await algod.getTransactionParams().do()
-    suggestedParams.fee = 2000
+    suggestedParams.fee = 3000
     suggestedParams.flatFee = true
 
     const encoder = new TextEncoder()
