@@ -32,7 +32,7 @@ async function trade(A, B, bid_id, currency_id, data) {
     const note_bytes = encoder.encode(data)
     const suggestedParamsAppCall = {...suggestedParams}
     suggestedParamsAppCall.flatFee = true
-    suggestedParamsAppCall.fee = 3000
+    suggestedParamsAppCall.fee = 4000
     const app_call_txn = algosdk.makeApplicationCallTxnFromObject({
         from: B,
         appIndex: FAIRMARKET_APP,

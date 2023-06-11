@@ -1,7 +1,7 @@
 // fair ordering
 // https://github.com/1m1-github/FairMarket
 
-import { CHRONY_PRECISION, shuffle } from "./global"
+import { bid_type, shuffle } from "./global"
 
 const TYPES = ["CHR", "HR", "LURK", "SUBJ"]
 
@@ -328,23 +328,6 @@ function create_bids_map(bids, block_min) {
         bids_map[type].push(bid)
     }
     return bids_map
-}
-
-function bid_type(bid, min) {
-    console.log("bid_type, bid.id, min, bid.fx_d == 0, bid.fx_n == 0", bid.id, min, bid.fx_d == 0, bid.fx_n == 0)
-    if (bid.fx_d == 0 && bid.fx_n == 0) return "SUBJ"
-
-    const value_in_base = Number(bid.currency_amount) * Number(bid.fx_n) / Number(bid.fx_d)
-    console.log("bid_type, bid.currency_amount, bid.fx_n, bid.fx_d, bid.fx_n / bid.fx_d, value_in_base", bid.currency_amount, bid.fx_n, bid.fx_d, bid.fx_n / bid.fx_d, value_in_base)
-
-    const upper_bound_CHRONY = Number(min) * Math.exp(CHRONY_PRECISION)
-    const lower_bound_CHRONY = Number(min) * Math.exp(-CHRONY_PRECISION)
-    console.log("bid_type, upper_bound_CHRONY", upper_bound_CHRONY)
-    console.log("bid_type, lower_bound_CHRONY", lower_bound_CHRONY)
-
-    if (value_in_base < lower_bound_CHRONY) return "LURK"
-    if (value_in_base <= upper_bound_CHRONY) return "CHR"
-    return "HR"
 }
 
 function importance_sum(importances) {

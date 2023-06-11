@@ -1,5 +1,7 @@
 import { user, peraWallet } from "./global"
-import { addLoggedInView, loginButton } from "./views"
+import { init } from "./views"
+
+document.addEventListener("DOMContentLoaded", reconnectSession()) // TODO creates infinite loop
 
 export function reconnectSession() {
     console.log("reconnectSession", peraWallet.isConnected)
@@ -11,8 +13,7 @@ export function reconnectSession() {
             console.log("reconnectSession 2", peraWallet.isConnected)
             if (peraWallet.isConnected && accounts.length) {
                 user = accounts[0]
-                addLoggedInView()
-                loginButton.innerHTML = "logout"
+                init()
             }
         })
         .catch((e) => console.log(e))
@@ -27,14 +28,9 @@ export function handleConnectWalletClick(event) {
         .then((newAccounts) => {
             peraWallet.connector.on("disconnect", handleDisconnectWalletClick)
             console.log("handleConnectWalletClick 2", peraWallet.isConnected)
-            user = newAccounts[0]
-
-            loginButton.innerHTML = "logout"
-            
+            user = newAccounts[0]            
             console.log('user', user)
-
-            addLoggedInView()
-
+            init()
         })
         .catch((error) => {
             if (error?.data?.type !== "CONNECT_MODAL_CLOSED") {
@@ -50,7 +46,6 @@ export function handleDisconnectWalletClick(event) {
         console.log(error)
         console.log("handleDisconnectWalletClick 2", peraWallet.isConnected)
     })
-
     user = ""
-    loginButton.innerHTML = "login"
+    init()
 }

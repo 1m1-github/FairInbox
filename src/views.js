@@ -1,5 +1,5 @@
 import { reconnectSession, handleConnectWalletClick, handleDisconnectWalletClick } from "./pera.js"
-import { user, peraWallet } from "./global.js"
+import { bid_type, user, peraWallet } from "./global.js"
 import { get_in_bids, get_out_bids } from "./get_bids.js"
 import { cancel } from "./cancel_bid.js"
 import { reply } from "./trade.js"
@@ -7,25 +7,57 @@ import { send } from "./create_bid.js"
 import { get_params, update_params } from "./params.js"
 
 export function init() {
+
+    console.log("init, user", user)
+
+    clear()
+
+    addAboutButton()
     addLoginButton()
-    if (user) addLoggedInView()
+
+    if (user) {
+        addComposeButton()
+        addInOutboxButtons()
+        addParamsButton()
+    }
 }
 
-export const loginButton = document.createElement("button")
+function clear() {
+    document.body.replaceChildren()
+}
 
-export async function addLoggedInView() {
-    await addSendButton()
-    await addInOutboxButtons()
-    await addParamsButton()
+// about
+function addAboutButton() {
+    const button = document.createElement("button")
+    document.body.appendChild(button)
+    button.id = "aboutbutton"
+    button.classList = "button"
+    button.innerHTML = "about"
+    button.addEventListener("click", (event) => {
+        init()
+        const msgs = [
+            "* fairinbox ~ evolution of the inbox ~ economics ordered msgs ~ attach any coins to any msg ~ recipient gets coins if it replies",
+            "* minimalistic ~ WASM -> HTML + vanilla js",
+            "* decentralized: ipfs + DLT (Algorand)",
+            "* user driven design ~ submit your css to <a href=fairinbox@1m1.io>fairinbox@1m1.io</a> with a single .css file attached and the subject \"FAIRINBOX CSS\" ~ if your file passes the security check, it will be available for everyone to use ~ the default is css free",
+            "* privacy ~ encrypted msgs coming soon (if app is used)",
+            "* community owned ~ value and governance will be fully run by the community",
+        ]
+        for (const msg of msgs) {
+            const d = document.createElement("div")
+            d.innerHTML = msg
+            document.body.appendChild(d)
+        }
+    })
 }
 
 // login
 function addLoginButton() {
+    const loginButton = document.createElement("button")
     document.body.appendChild(loginButton)
     loginButton.id = "loginbutton"
     loginButton.classList = "button"
-    loginButton.innerHTML = "login"
-    document.addEventListener("DOMContentLoaded", reconnectSession())
+    loginButton.innerHTML = user ? `logout ${user}` : `login`
     loginButton.addEventListener("click", (event) => {
         if (user) {
             handleDisconnectWalletClick(event)
@@ -103,35 +135,44 @@ export function addParamsButton() {
 }
 
 // send
-export function addSendButton() {
-    const B = document.createElement("input")
-    B.id = "send_B"
-    B.classList = "input addr"
-    B.setAttribute("placeholder", "To")
-    document.body.appendChild(B)
-    const currency_amount = document.createElement("input")
-    currency_amount.id = "send_currency_amount"
-    currency_amount.classList = "input int"
-    currency_amount.setAttribute("placeholder", "currency amount")
-    document.body.appendChild(currency_amount)
-    const currency_id = document.createElement("input")
-    currency_id.id = "send_currency_id"
-    currency_id.classList = "input int"
-    currency_id.setAttribute("placeholder", "currency id")
-    document.body.appendChild(currency_id)
-    const data = document.createElement("input")
-    data.id = "send_data"
-    data.classList = "input str"
-    data.setAttribute("placeholder", "msg")
-    document.body.appendChild(data)
-    const button = document.createElement("button")
-    button.id = "send_button"
-    button.classList = "button"
-    document.body.appendChild(button)
-    button.innerHTML = "send"
-    button.addEventListener("click", (event) => {
-        console.log("addCreateBidButton", peraWallet.isConnected)
+export function addComposeButton() {
+    const compose_button = document.createElement("button")
+    compose_button.id = "compose_button"
+    compose_button.classList = "button"
+    document.body.appendChild(compose_button)
+    compose_button.innerHTML = "compose"
+    compose_button.addEventListener("click", (event) => {
+        init()
+
         if (!user) return
+
+        document.body.appendChild(document.createElement("br"))
+
+        const B = document.createElement("input")
+        B.id = "send_B"
+        B.classList = "input addr"
+        B.setAttribute("placeholder", "To")
+        document.body.appendChild(B)
+
+        document.body.appendChild(document.createElement("br"))
+
+        const currency_amount = document.createElement("input")
+        currency_amount.id = "send_currency_amount"
+        currency_amount.classList = "input int"
+        currency_amount.setAttribute("placeholder", "currency amount")
+        document.body.appendChild(currency_amount)
+        const currency_id = document.createElement("input")
+        currency_id.id = "send_currency_id"
+        currency_id.classList = "input int"
+        currency_id.setAttribute("placeholder", "currency id")
+        document.body.appendChild(currency_id)
+        const data = document.createElement("input")
+        data.id = "send_data"
+        data.classList = "input str"
+        data.setAttribute("placeholder", "msg")
+        document.body.appendChild(data)
+
+        console.log("addCreateBidButton", peraWallet.isConnected)
         // let A = "HQMMGGF3KJRPTEZV6GKGT6PNQJBZWUBIQMHG4XBVGBIV2E2V4LWOFHVEAA"
         // let B = A
         // // let B = "5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU"
@@ -139,8 +180,16 @@ export function addSendButton() {
         // let currency_id = 10458941
         // let data = "hi"
         console.log("B", B.value)
-        // return send(B.value, Number(currency_id.value), Number(currency_amount.value), data.value)
-        return send("5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU", Number(currency_id.value), Number(currency_amount.value), data.value)
+
+        const send_button = document.createElement("button")
+        send_button.id = "send_button"
+        send_button.classList = "button"
+        document.body.appendChild(send_button)
+        send_button.innerHTML = "send"
+        send_button.addEventListener("click", (event) => {
+            // return send("5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU", Number(currency_id.value), Number(currency_amount.value), data.value)
+            return send(B.value, Number(currency_id.value), Number(currency_amount.value), data.value)
+        })
     })
 }
 
@@ -159,6 +208,7 @@ function addIOButton(name, reload_f) {
     button.innerHTML = name
     button.addEventListener("click", (event) => {
         console.log("global", peraWallet.isConnected)
+        init()
         if (!user) return
         return reload_f()
     })
@@ -213,7 +263,7 @@ function bid_to_html(bid, action_f) {
     <div id=${bid.id}_B class="B addr">${bid.B}</div>
     <div id=${bid.id}_currency_id class="int">${bid.currency_id}</div>
     <div id=${bid.id}_currency_amount class="int">${bid.currency_amount}</div>
-    <div id=${bid.id}_type class="bid_type">${bid.type}</div>
+    <div id=${bid.id}_type class="bid_type">${bid_type(bid, bid.min)}</div>
     <div id=${bid.id}_time class="time">${bid.time}</div>
     <div id=${bid.id}_data class="str">${bid.data}</div>
     `
