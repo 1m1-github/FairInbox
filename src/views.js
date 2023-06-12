@@ -36,12 +36,15 @@ function addAboutButton() {
     button.addEventListener("click", (event) => {
         init()
         const msgs = [
-            "* fairinbox ~ evolution of the inbox ~ economics ordered msgs ~ attach any coins to any msg ~ recipient gets coins if it replies",
+            "* fairinbox",
+            "* evolution of the inbox ~ attach coins to any msg ~ recipient gets coins if it replies",
+            "* market driven order ~ <a href=https://github.com/1m1-github/FairMarket/blob/main/whitepaper/FairMarket.pdf>white paper</a>",
             "* minimalistic ~ WASM -> HTML + vanilla js",
             "* decentralized: ipfs + DLT (Algorand)",
             "* user driven design ~ submit your css to <a href=fairinbox@1m1.io>fairinbox@1m1.io</a> with a single .css file attached and the subject \"FAIRINBOX CSS\" ~ if your file passes the security check, it will be available for everyone to use ~ the default is css free",
             "* privacy ~ encrypted msgs coming soon (if app is used)",
             "* community owned ~ value and governance will be fully run by the community",
+            "* open source ~ <a href=https://github.com/1m1-github/FairInbox>github</a>",
         ]
         for (const msg of msgs) {
             const d = document.createElement("div")
@@ -75,6 +78,9 @@ export function addParamsButton() {
     button.id = "params_button"
     button.classList = "button"
     button.addEventListener("click", async (event) => {
+
+        init()
+
         console.log("addParamsButton", peraWallet.isConnected)
         if (!user) return
         
@@ -161,25 +167,33 @@ export function addComposeButton() {
         currency_amount.classList = "input int"
         currency_amount.setAttribute("placeholder", "currency amount")
         document.body.appendChild(currency_amount)
+
+        document.body.appendChild(document.createElement("br"))
+
         const currency_id = document.createElement("input")
         currency_id.id = "send_currency_id"
         currency_id.classList = "input int"
         currency_id.setAttribute("placeholder", "currency id")
         document.body.appendChild(currency_id)
+
+        document.body.appendChild(document.createElement("br"))
+
         const data = document.createElement("input")
         data.id = "send_data"
         data.classList = "input str"
         data.setAttribute("placeholder", "msg")
         document.body.appendChild(data)
 
-        console.log("addCreateBidButton", peraWallet.isConnected)
+        // console.log("addCreateBidButton", peraWallet.isConnected)
         // let A = "HQMMGGF3KJRPTEZV6GKGT6PNQJBZWUBIQMHG4XBVGBIV2E2V4LWOFHVEAA"
         // let B = A
         // // let B = "5B3SUGACYLICWU3DHXYCS45NDNEFZCZM4MCKCKQA3DLGKZEOFQR74HLGEU"
         // let currency_amount = 2
         // let currency_id = 10458941
         // let data = "hi"
-        console.log("B", B.value)
+        // console.log("B", B.value)
+
+        document.body.appendChild(document.createElement("br"))
 
         const send_button = document.createElement("button")
         send_button.id = "send_button"
@@ -218,11 +232,21 @@ async function reload(get_bids, action_f) {
     const bids_map = await get_bids()
     const bids = Object.values(bids_map)
     document.body.appendChild(document.createElement("br"))
+    
+    if (bids.length === 0) {
+        const inbox_empty = document.createElement("div")
+        inbox_empty.id = "empty_message"
+        inbox_empty.classList = "info"
+        inbox_empty.innerHTML = "empty"
+        document.body.appendChild(inbox_empty)
+    }
+
     for (const bid of bids) {
         const bidDiv = bid_to_html(bid, action_f)
         document.body.appendChild(bidDiv)
         document.body.appendChild(document.createElement("br"))
     }
+
     return bids
 }
 
@@ -259,13 +283,12 @@ function bid_to_html(bid, action_f) {
     const f = `${action_f}("${bid.id}")`
     console.log(f)
     bidDiv.innerHTML = `
-    <div id=${bid.id}_A class="A addr">${bid.A}</div>
-    <div id=${bid.id}_B class="B addr">${bid.B}</div>
-    <div id=${bid.id}_currency_id class="int">${bid.currency_id}</div>
-    <div id=${bid.id}_currency_amount class="int">${bid.currency_amount}</div>
-    <div id=${bid.id}_type class="bid_type">${bid_type(bid, bid.min)}</div>
-    <div id=${bid.id}_time class="time">${bid.time}</div>
-    <div id=${bid.id}_data class="str">${bid.data}</div>
+    <div id=${bid.id}_A class="A addr">from: ${bid.A}</div>
+    <div id=${bid.id}_B class="B addr">to: ${bid.B}</div>
+    <div id=${bid.id}_currency_id class="int">currency id: ${bid.currency_id}</div>
+    <div id=${bid.id}_currency_amount class="int">currency amount: ${bid.currency_amount}</div>
+    <div id=${bid.id}_time class="time">time: ${bid.time}</div>
+    <div id=${bid.id}_data class="str">data: ${bid.data}</div>
     `
     const action = action_f(bid.id)
     bidDiv.append(action)
