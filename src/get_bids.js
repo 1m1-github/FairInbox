@@ -1,4 +1,4 @@
-import { get_box, indexer, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet, MIN_ROUND, b64_to_uint8array, FAIRMARKET_ACCOUNT, uint8ArrayToBase64 } from "./global"
+import { get_box, indexer, user, bid_ins, bid_outs, peraWallet, MIN_ROUND, b64_to_uint8array, FAIRMARKET_ACCOUNT, uint8ArrayToBase64 } from "./global"
 import algosdk from "algosdk"
 import { fairmarket_ordering } from "./fairmarket"
 
@@ -12,18 +12,17 @@ function array_to_map(bids_array) {
 
 export async function get_in_bids() {
     console.log("get_in_bids", peraWallet.isConnected)
-    // const transactionInfo = await indexerClient
-    //     .searchForTransactions()
-    //     .txid("QPDRSHL44EU3WMLZKUD7QLMECWJ3HNKOJYQHSEPJIHLUVYN3CG6Q")
-    //     .do()
+    
     const B = user
+    const B_bytes = algosdk.decodeAddress(B).publicKey
+
     const transactionInfo = await indexer
         .searchForTransactions()
         .minRound(MIN_ROUND)
         .address(FAIRMARKET_ACCOUNT)
         .addressRole("receiver")
         .txType("axfer")
-        .notePrefix(btoa(`${B}.`))
+        .notePrefix(B_bytes)
         .do()
     console.log(transactionInfo)
     const bid_ins_array = await get_bids(transactionInfo.transactions)
@@ -39,8 +38,6 @@ export async function get_out_bids() {
     const transactionInfoFromA = await indexer
         .searchForTransactions()
         .minRound(MIN_ROUND)
-        // .address(FAIRMARKET_ACCOUNT)
-        // .addressRole("receiver")
         .address(A)
         .addressRole("sender")
         .txType("axfer")
@@ -61,8 +58,6 @@ export async function get_out_bids() {
 async function get_bids(transactions) {
     let bids = []
     for (const txn of transactions) {
-        // const txn = transactionInfo.transactions[0]
-        // console.log("txn", txn)
         const bid = await bid_from_txn(txn)
         if (bid) bids.push(bid)
     }
@@ -72,22 +67,15 @@ async function get_bids(transactions) {
 
 export async function bid_from_txn(txn) {
     // console.log(txn)
-    // console.log(txn["application-transaction"])
-    // console.log(txn["application-transaction"]["application-args"])
 
     const note_b64 = txn["note"]
+    console.log("bid_from_txn, note_b64", note_b64)
     const note_bytes = b64_to_uint8array(note_b64)
-    const bid_id_bytes = note_bytes.slice(59, 92)
-    const bid_id = new TextDecoder().decode(bid_id_bytes)
-
-    // const args = txn["application-transaction"]["application-args"]
-    // const bid_id = txn["note"]
-    // console.log("bid_id", bid_id)
-    // if (!bid_id) return null
-    // const bid_id_uint8 = b64_to_uint8array(bid_id)
-    // console.log("bid_id_uint8", bid_id_uint8)
-    console.log("bid_id_bytes", bid_id_bytes)
-    console.log("bid_id", bid_id)
+    console.log("bid_from_txn, note_bytes", note_bytes)
+    const bid_id_bytes = note_bytes.slice(33, 65)
+    console.log("bid_from_txn, bid_id_bytes", bid_id_bytes)
+    const bid_id = await uint8ArrayToBase64(bid_id_bytes)
+    console.log("bid_from_txn, bid_id", bid_id)
 
     const bid_bytes = await get_box(bid_id_bytes)
     console.log("bid_bytes", bid_bytes)

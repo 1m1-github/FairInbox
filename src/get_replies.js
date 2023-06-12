@@ -1,5 +1,4 @@
-import { indexer, FAIRMARKET_APP, user, MIN_ROUND, b64_to_uint8array, FAIRMARKET_ACCOUNT, uint8ArrayToBase64 } from "./global"
-import { bid_from_txn } from "./get_bids"
+import { indexer, user, MIN_ROUND, b64_to_uint8array, FAIRMARKET_ACCOUNT, uint8ArrayToBase64, textEncoder } from "./global"
 import algosdk from "algosdk"
 
 export async function get_replies() {
@@ -25,8 +24,6 @@ export async function get_replies() {
 async function get_replies_from_transactionInfo(transactionInfo) {
     let replies = []
     for (const txn of transactionInfo.transactions) {
-        // const txn = transactionInfo.transactions[0]
-        // console.log("txn", txn)
         const reply = await reply_from_txn(txn)
         const html = reply_to_html(reply)
         if (reply) replies.push(html)
@@ -37,8 +34,6 @@ async function get_replies_from_transactionInfo(transactionInfo) {
 
 async function reply_from_txn(reply_txn) {
     console.log("reply_from_txn, reply_txn", reply_txn)
-    // console.log(txn["application-transaction"])
-    // console.log(txn["application-transaction"]["application-args"])
     const args = reply_txn["application-transaction"]["application-args"]
     const bid_id = args[1]
     console.log("reply_from_txn, bid_id", bid_id)
@@ -48,10 +43,9 @@ async function reply_from_txn(reply_txn) {
     
     const A = user
     const B = reply_txn["sender"]
-    
-    const note1_bytes = new TextEncoder().encode(`${B}.`)
-    const note_bytes = new Uint8Array([...note1_bytes, ...bid_id_bytes])
-    console.log("reply_from_txn, note1_bytes", note1_bytes)
+    const B_bytes = algosdk.decodeAddress(B).publicKey
+    const dot_bytes = textEncoder.encode(".")
+    const note_bytes = new Uint8Array([...B_bytes, ...dot_bytes, ...bid_id_bytes])
     console.log("reply_from_txn, note_bytes", note_bytes)
 
     const transactionInfoBid = await indexer
@@ -59,8 +53,6 @@ async function reply_from_txn(reply_txn) {
         .minRound(MIN_ROUND)
         .address(A)
         .addressRole("sender")
-        // .address(FAIRMARKET_ACCOUNT)
-        // .addressRole("receiver")
         .txType("axfer")
         .notePrefix(note_bytes)
         .do()
@@ -74,7 +66,7 @@ async function reply_from_txn(reply_txn) {
     const currency_amount = bid_axfer_txn["asset-transfer-transaction"]["amount"]
     const time = bid_axfer_txn["round-time"]
     
-    const question_bytes = b64_to_uint8array(bid_axfer_txn["note"]).slice(92)
+    const question_bytes = b64_to_uint8array(bid_axfer_txn["note"]).slice(66)
     const question = new TextDecoder().decode(question_bytes)
     
     const answer_bytes = b64_to_uint8array(reply_txn["note"])
@@ -105,8 +97,8 @@ function reply_to_html(reply) {
     <div id=${reply.id}_currency_id class="int">currency id: ${reply.currency_id}</div>
     <div id=${reply.id}_currency_amount class="int">currency amount: ${reply.currency_amount}</div>
     <div id=${reply.id}_time class="time">time: ${reply.time}</div>
-    <div id=${reply.id}_question class="str data question">data: ${reply.question}</div>
-    <div id=${reply.id}_answer class="str data answer">data: ${reply.answer}</div>
+    <div id=${reply.id}_question class="str data question">question: ${reply.question}</div>
+    <div id=${reply.id}_answer class="str data answer">answer: ${reply.answer}</div>
     `
     return replyDiv
 }

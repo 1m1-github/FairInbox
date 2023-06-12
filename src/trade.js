@@ -25,9 +25,9 @@ async function trade(A, B, bid_id, currency_id, data) {
         suggestedParams: suggestedParams,
     })
 
-    const arg0 = textEncoder.encode("trade")
-    const arg1 = b64_to_uint8array(bid_id)
-    const box0 = {appIndex: FAIRMARKET_APP, name: arg1}
+    const api_cmd_bytes = textEncoder.encode("trade")
+    const bid_id_bytes = b64_to_uint8array(bid_id)
+    const box0 = {appIndex: FAIRMARKET_APP, name: bid_id_bytes}
     const note_bytes = textEncoder.encode(data)
     const suggestedParamsAppCall = {...suggestedParams}
     suggestedParamsAppCall.flatFee = true
@@ -37,7 +37,7 @@ async function trade(A, B, bid_id, currency_id, data) {
         appIndex: FAIRMARKET_APP,
         accounts: [A],
         foreignAssets: [currency_id],
-        appArgs: [arg0, arg1],
+        appArgs: [api_cmd_bytes, bid_id_bytes],
         boxes: [box0],
         note: note_bytes,
         suggestedParams: suggestedParamsAppCall,
