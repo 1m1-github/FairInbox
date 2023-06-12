@@ -8,7 +8,7 @@ import (
 
 	// "crypto/sha512"
 	"bytes"
-	"context"
+	// "context"
 	"crypto/sha512"
 
 	// "crypto/sha512"
@@ -20,14 +20,14 @@ import (
 	"encoding/base32"
 	"encoding/base64"
 	"encoding/binary"
-	"encoding/json"
+	// "encoding/json"
 
 	// "encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/algorand/go-algorand-sdk/client/v2/indexer"
+	// "github.com/algorand/go-algorand-sdk/client/v2/indexer"
 	// "strconv"
 	// "strings"
 	// "strings"
@@ -51,6 +51,7 @@ import (
 
 // tinygo build -o test.wasm -target wasm ./FairInboxAlgorand.go
 func main() {
+	encoding_decoding_2()
 	// encoding_decoding()
 	// fmt.Println("main")
 	// printlog("KKIVEIX6TEL32KM2TIYPSVMA3CEIY3IM4M3HBGSNYXIJMYSQD6HQ")
@@ -78,21 +79,21 @@ func log_to_int(s string) uint64 {
 
 // }
 
-func printlog(txid string) {
-	var indexerAddress = "https://algoindexer.testnet.algoexplorerapi.io/"
-	var indexerToken = ""
-	indexerClient, _ := indexer.MakeClient(
-		indexerAddress,
-		indexerToken,
-	)
+// func printlog(txid string) {
+// 	var indexerAddress = "https://algoindexer.testnet.algoexplorerapi.io/"
+// 	var indexerToken = ""
+// 	indexerClient, _ := indexer.MakeClient(
+// 		indexerAddress,
+// 		indexerToken,
+// 	)
 
-	transactionResult, _ := indexerClient.
-		SearchForTransactions().
-		TXID(txid).
-		Do(context.Background())
-	transactionJson, _ := json.MarshalIndent(transactionResult, "", "\t")
-	fmt.Printf(string(transactionJson) + "\n")
-}
+// 	transactionResult, _ := indexerClient.
+// 		SearchForTransactions().
+// 		TXID(txid).
+// 		Do(context.Background())
+// 	transactionJson, _ := json.MarshalIndent(transactionResult, "", "\t")
+// 	fmt.Printf(string(transactionJson) + "\n")
+// }
 
 func parseAppArgs(appArgsString string) (appArgs [][]byte, err error) {
 	if appArgsString == "" {
@@ -218,4 +219,14 @@ func encoding_decoding() {
 	// fmt.Println(a)
 	// b := string(a)
 	// fmt.Println(b)
+}
+
+func encoding_decoding_2() {
+	// address to []byte
+	a_with_checksum, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString("HQMMGGF3KJRPTEZV6GKGT6PNQJBZWUBIQMHG4XBVGBIV2E2V4LWOFHVEAA")
+	// a := a_with_checksum[:32]
+	a := a_with_checksum
+	fmt.Println(a)
+	a_b64 := base64.StdEncoding.EncodeToString(a)
+	fmt.Println(a_b64)
 }
