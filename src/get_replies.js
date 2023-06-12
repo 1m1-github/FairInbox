@@ -1,4 +1,4 @@
-import { indexer, user, MIN_ROUND, b64_to_uint8array, FAIRMARKET_ACCOUNT, uint8ArrayToBase64, textEncoder } from "./global"
+import { indexer, user, MIN_ROUND, b64_to_uint8array, FAIRMARKET_ACCOUNT, uint8ArrayToBase64, textEncoder, textDecoder } from "./global"
 import algosdk from "algosdk"
 
 export async function get_replies() {
@@ -21,15 +21,19 @@ export async function get_replies() {
     return get_replies_from_transactionInfo(transactionInfo)
 }
 
+// TODO bug i think we are counting multiply
 async function get_replies_from_transactionInfo(transactionInfo) {
-    let replies = []
+    let htmls = []
     for (const txn of transactionInfo.transactions) {
         const reply = await reply_from_txn(txn)
-        const html = reply_to_html(reply)
-        if (reply) replies.push(html)
+        if (reply) 
+        {
+            const reply_html = reply_to_html(reply)
+            htmls.push(reply_html)
+        }
     }
-    console.log(replies)
-    return replies
+    console.log(htmls)
+    return htmls
 }
 
 async function reply_from_txn(reply_txn) {
@@ -58,21 +62,19 @@ async function reply_from_txn(reply_txn) {
         .do()
     
     console.log("reply_from_txn, transactionInfoBid", transactionInfoBid)
-    // if (transactionInfoBid.transactions.length !== 1) return null // should find exactly 1 match
     const bid_axfer_txn = transactionInfoBid.transactions[0]
-    console.log("reply_from_txn, bid_axfer_txn", bid_axfer_txn)
 
     const currency_id = bid_axfer_txn["asset-transfer-transaction"]["asset-id"]
     const currency_amount = bid_axfer_txn["asset-transfer-transaction"]["amount"]
     const time = bid_axfer_txn["round-time"]
     
-    const question_bytes = b64_to_uint8array(bid_axfer_txn["note"]).slice(66)
-    const question = new TextDecoder().decode(question_bytes)
+    const question_bytes = b64_to_uint8array(bid_axfer_txn["note"]).slice(66) // 66 = 32+1+32+1 ... B.bid_id.data
+    const question = textDecoder.decode(question_bytes)
     
     const answer_bytes = b64_to_uint8array(reply_txn["note"])
-    const answer = new TextDecoder().decode(answer_bytes)
+    const answer = textDecoder.decode(answer_bytes)
 
-    const obj = {
+    return {
         id: bid_id,
         A,
         B,
@@ -82,9 +84,6 @@ async function reply_from_txn(reply_txn) {
         question,
         answer,
     }
-    console.log("reply_from_txn, obj", obj)
-
-    return obj
 }
 
 function reply_to_html(reply) {

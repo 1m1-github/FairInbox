@@ -3,6 +3,7 @@ import algosdk from "algosdk"
 import { PeraWalletConnect } from "@perawallet/connect"
 
 export const textEncoder = new TextEncoder()
+export const textDecoder = new TextDecoder()
 
 // constants
 // export const FAIRMARKET_ACCOUNT = "EMHKWV5XTWAEVM3WN2FFHGHO5AWQSAC6VUNK36PWYC4AK4ARMULCQY7IY4"
