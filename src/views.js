@@ -306,6 +306,15 @@ function addRepliesButton() {
         init()
         if (!user) return
         const replies = await get_replies()
+
+        if (replies.length === 0) {
+            const inbox_empty = document.createElement("div")
+            inbox_empty.id = "empty_message"
+            inbox_empty.classList = "info"
+            inbox_empty.innerHTML = "empty"
+            document.body.appendChild(inbox_empty)
+        }
+
         for (const reply of replies) {
             document.body.appendChild(reply)
             document.body.appendChild(document.createElement("br"))
