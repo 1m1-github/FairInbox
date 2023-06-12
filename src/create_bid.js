@@ -5,7 +5,7 @@
 // BID_ID = hash($A$B$CURRENCY_ID$CURRENCY_AMOUNT$NOTE)
 
 import algosdk from "algosdk"
-import { sign_and_send, user, algod, FAIRMARKET_ACCOUNT, FAIRMARKET_APP, SEND_ALGO_AMOUNT, FX_APP, FX_LP_ACCOUNT, FX_LP_APP, peraWallet, uint8ArrayToBase64, b64_to_uint8array } from "./global.js"
+import { textEncoder, sign_and_send, user, algod, FAIRMARKET_ACCOUNT, FAIRMARKET_APP, SEND_ALGO_AMOUNT, FX_APP, FX_LP_ACCOUNT, FX_LP_APP, peraWallet, uint8ArrayToBase64, b64_to_uint8array } from "./global.js"
 import { sha512_256 } from "js-sha512"
 
 export function send(B, currency_id, currency_amount, data) {
@@ -27,11 +27,21 @@ function calc_bid_id(A, B, currency_id, currency_amount, data) {
     console.log(data_bytes)
     const all_bytes = [...A_addr.publicKey, ...B_addr.publicKey, ...currency_id_bytes, ...currency_amount_bytes, ...data_bytes]
     console.log(all_bytes)
-    const bid_id_uint8 = new Uint8Array(sha512_256.array(all_bytes))
-    console.log(bid_id_uint8)
+    const bid_id_bytes = new Uint8Array(sha512_256.array(all_bytes))
+    console.log(bid_id_bytes)
     // const bid_id_b64 = await uint8ArrayToBase64(bid_id_uint8)
     // console.log(bid_id_b64)
-    return bid_id_uint8
+    return bid_id_bytes
+}
+
+function calc_create_note(B, bid_id_bytes, data) {
+    const B_bytes = algosdk.decodeAddress(B).publicKey
+    console.log(B_bytes)
+    const dot_bytes = textEncoder.encode(".")
+    const data_bytes = textEncoder.encode(data)
+    console.log(data_bytes)
+    const all_bytes = new Uint8Array([...B_bytes, ...dot_bytes, ...bid_id_bytes, ...dot_bytes, ...data_bytes])
+    return all_bytes
 }
 
 async function create_bid(A, B, currency_id, currency_amount, data) {
@@ -61,40 +71,35 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
     })
     console.log("algo_send", algo_send_txn)
 
-    const encoder = new TextEncoder()
-    const api_cmd_uint8 = encoder.encode("create_bid")
-    const B_uint8 = algosdk.decodeAddress(B).publicKey
-    const bid_id_uint8 = calc_bid_id(A, B, currency_id, currency_amount, data)
-    const box0 = { appIndex: FAIRMARKET_APP, name: bid_id_uint8 }
-    const box1 = { appIndex: FAIRMARKET_APP, name: B_uint8 }
+    const api_cmd_bytes = textEncoder.encode("create_bid")
+    const B_bytes = algosdk.decodeAddress(B).publicKey
+    const bid_id_bytes = calc_bid_id(A, B, currency_id, currency_amount, data)
+    const box0 = { appIndex: FAIRMARKET_APP, name: B_bytes }
+    const box1 = { appIndex: FAIRMARKET_APP, name: bid_id_bytes }
     
     const suggestedParamsAppCall = { ...suggestedParams }
     suggestedParamsAppCall.flatFee = true
     suggestedParamsAppCall.fee = 5000
 
-    const note1 = `${B}.`
-    const note1_bytes = encoder.encode(note1)
-    const note2_bytes = bid_id_uint8
-    const note3 = `.${data}`
-    const note3_bytes = encoder.encode(note3)
-    const note_bytes = new Uint8Array([...note1_bytes, ...note2_bytes, ...note3_bytes])
-    
     const app_call_txn = algosdk.makeApplicationCallTxnFromObject({
         from: A,
         appIndex: FAIRMARKET_APP,
         foreignAssets: [currency_id],
-        appArgs: [api_cmd_uint8, B_uint8, bid_id_uint8],
+        appArgs: [api_cmd_bytes, B_bytes, bid_id_bytes],
         boxes: [box0, box1],
-        note: note_bytes,
         suggestedParams: suggestedParamsAppCall,
     })
     console.log("app_call", app_call_txn)
+
+    const note_bytes = calc_create_note(B, bid_id_bytes, data)
+    console.log("note_bytes", note_bytes)
 
     const asset_send_txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
         from: A,
         to: FAIRMARKET_ACCOUNT,
         assetIndex: currency_id,
         amount: currency_amount,
+        note: note_bytes,
         suggestedParams: suggestedParams,
     })
     console.log("asset_send", asset_send_txn)

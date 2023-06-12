@@ -51,7 +51,7 @@ import (
 
 // tinygo build -o test.wasm -target wasm ./FairInboxAlgorand.go
 func main() {
-	encoding_decoding_2()
+	bid_id()
 	// encoding_decoding()
 	// fmt.Println("main")
 	// printlog("KKIVEIX6TEL32KM2TIYPSVMA3CEIY3IM4M3HBGSNYXIJMYSQD6HQ")
@@ -129,7 +129,7 @@ func parseAppArgs(appArgsString string) (appArgs [][]byte, err error) {
 	return resp, err
 }
 
-func encoding_decoding() {
+func bid_id() {
 	// printlog("VYILRFJVTOBC76OWQKOZNPLNAY23DWEWLRIHVUQ5NKVUYBMBTHUA")
 
 	// algodClient, _ := algod.MakeClient(
@@ -185,19 +185,19 @@ func encoding_decoding() {
 	// fmt.Println(base64.StdEncoding.EncodeToString(b))
 
 	// // // int to []byte
-	curreny_id_int := 10458941
+	curreny_id_int := 753137719
 	currency_id := make([]byte, 8)
 	binary.BigEndian.PutUint64(currency_id, uint64(curreny_id_int))
 	fmt.Println(currency_id)
 	// fmt.Println(base64.StdEncoding.EncodeToString(currency_id))
 
-	curreny_amount_int := 19
+	curreny_amount_int := 4
 	currency_amount := make([]byte, 8)
 	binary.BigEndian.PutUint64(currency_amount, uint64(curreny_amount_int))
 	fmt.Println(currency_amount)
 	// fmt.Println(base64.StdEncoding.EncodeToString(currency_amount))
 
-	note := "hello world"
+	note := "a3"
 	note_bytes := []byte(note)
 	fmt.Println(note_bytes)
 	// // fmt.Println(base64.StdEncoding.DecodeString("aGVsbG8gd29ybGQ="))
@@ -222,11 +222,6 @@ func encoding_decoding() {
 }
 
 func encoding_decoding_2() {
-	// address to []byte
-	a_with_checksum, _ := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString("HQMMGGF3KJRPTEZV6GKGT6PNQJBZWUBIQMHG4XBVGBIV2E2V4LWOFHVEAA")
-	// a := a_with_checksum[:32]
-	a := a_with_checksum
-	fmt.Println(a)
-	a_b64 := base64.StdEncoding.EncodeToString(a)
-	fmt.Println(a_b64)
+	x, _ := base64.StdEncoding.DecodeString("YWARE6XCII37Z75BUEMNFNGOHQSMMKPS73FFQDZDXVUZE4EZ7BPPOP45EI")
+	fmt.Println(x)
 }

@@ -1,4 +1,4 @@
-import { get_box, indexer, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet, MIN_ROUND, b64_to_uint8array } from "./global"
+import { get_box, indexer, FAIRMARKET_APP, user, bid_ins, bid_outs, peraWallet, MIN_ROUND, b64_to_uint8array, FAIRMARKET_ACCOUNT, uint8ArrayToBase64 } from "./global"
 import algosdk from "algosdk"
 import { fairmarket_ordering } from "./fairmarket"
 
@@ -16,15 +16,17 @@ export async function get_in_bids() {
     //     .searchForTransactions()
     //     .txid("QPDRSHL44EU3WMLZKUD7QLMECWJ3HNKOJYQHSEPJIHLUVYN3CG6Q")
     //     .do()
+    const B = user
     const transactionInfo = await indexer
         .searchForTransactions()
         .minRound(MIN_ROUND)
-        .applicationID(FAIRMARKET_APP)
-        .txType("appl")
-        .notePrefix(btoa(`${user}.`))
+        .address(FAIRMARKET_ACCOUNT)
+        .addressRole("receiver")
+        .txType("axfer")
+        .notePrefix(btoa(`${B}.`))
         .do()
     console.log(transactionInfo)
-    const bid_ins_array = await get_bids(transactionInfo)
+    const bid_ins_array = await get_bids(transactionInfo.transactions)
     const bid_ins_map = array_to_map(bid_ins_array)
     const historical_types = [] // assume no history for now...TODO
     const bids = fairmarket_ordering(historical_types, Object.values(bid_ins_map))
@@ -33,14 +35,17 @@ export async function get_in_bids() {
 }
 
 export async function get_out_bids() {
-    const transactionInfo = await indexer
+    const A = user
+    const transactionInfoFromA = await indexer
         .searchForTransactions()
         .minRound(MIN_ROUND)
-        .applicationID(FAIRMARKET_APP)
-        .address(user)
+        // .address(FAIRMARKET_ACCOUNT)
+        // .addressRole("receiver")
+        .address(A)
         .addressRole("sender")
-        .txType("appl")
+        .txType("axfer")
         .do()
+    const transactionInfo = transactionInfoFromA.transactions.filter((txn) => txn["asset-transfer-transaction"].receiver === FAIRMARKET_ACCOUNT)
     console.log("transactionInfo", transactionInfo)
     const bid_outs_array = await get_bids(transactionInfo)
     console.log("bid_outs_array", bid_outs_array)
@@ -53,9 +58,9 @@ export async function get_out_bids() {
     return bid_outs
 }
 
-async function get_bids(transactionInfo) {
+async function get_bids(transactions) {
     let bids = []
-    for (const txn of transactionInfo.transactions) {
+    for (const txn of transactions) {
         // const txn = transactionInfo.transactions[0]
         // console.log("txn", txn)
         const bid = await bid_from_txn(txn)
@@ -65,70 +70,78 @@ async function get_bids(transactionInfo) {
     return bids
 }
 
-async function bid_from_txn(txn) {
+export async function bid_from_txn(txn) {
     // console.log(txn)
     // console.log(txn["application-transaction"])
     // console.log(txn["application-transaction"]["application-args"])
-    const args = txn["application-transaction"]["application-args"]
-    const bid_id = args[args.length - 1]
-    console.log("bid_id", bid_id)
-    if (!bid_id) return null
-    const bid_id_uint8 = b64_to_uint8array(bid_id)
-    console.log("bid_id_uint8", bid_id_uint8)
 
-    const bid_uint8 = await get_box(bid_id_uint8)
-    console.log("bid_uint8", bid_uint8)
-    if (!bid_uint8) return null
+    const note_b64 = txn["note"]
+    const note_bytes = b64_to_uint8array(note_b64)
+    const bid_id_bytes = note_bytes.slice(59, 92)
+    const bid_id = new TextDecoder().decode(bid_id_bytes)
+
+    // const args = txn["application-transaction"]["application-args"]
+    // const bid_id = txn["note"]
+    // console.log("bid_id", bid_id)
+    // if (!bid_id) return null
+    // const bid_id_uint8 = b64_to_uint8array(bid_id)
+    // console.log("bid_id_uint8", bid_id_uint8)
+    console.log("bid_id_bytes", bid_id_bytes)
+    console.log("bid_id", bid_id)
+
+    const bid_bytes = await get_box(bid_id_bytes)
+    console.log("bid_bytes", bid_bytes)
+    if (!bid_bytes) return null
 
     let counter = 0
     const INT_LENGTH = 8
     const ADDRESS_LENGTH = 32
 
-    const time = algosdk.bytesToBigInt(bid_uint8.slice(counter, counter + INT_LENGTH))
+    const time = algosdk.bytesToBigInt(bid_bytes.slice(counter, counter + INT_LENGTH))
     counter += INT_LENGTH
     console.log("time", time)
 
-    const A = algosdk.encodeAddress(bid_uint8.slice(counter, counter + ADDRESS_LENGTH))
+    const A = algosdk.encodeAddress(bid_bytes.slice(counter, counter + ADDRESS_LENGTH))
     counter += ADDRESS_LENGTH
-    const B = algosdk.encodeAddress(bid_uint8.slice(counter, counter + ADDRESS_LENGTH))
+    const B = algosdk.encodeAddress(bid_bytes.slice(counter, counter + ADDRESS_LENGTH))
     counter += ADDRESS_LENGTH
     console.log("A", A)
     console.log("B", B)
 
-    const currency_id = Number(algosdk.bytesToBigInt(bid_uint8.slice(counter, counter + INT_LENGTH)))
+    const currency_id = Number(algosdk.bytesToBigInt(bid_bytes.slice(counter, counter + INT_LENGTH)))
     counter += INT_LENGTH
     console.log("currency_id", currency_id)
-    const currency_amount = algosdk.bytesToBigInt(bid_uint8.slice(counter, counter + INT_LENGTH))
+    const currency_amount = algosdk.bytesToBigInt(bid_bytes.slice(counter, counter + INT_LENGTH))
     counter += INT_LENGTH
     console.log("currency_amount", currency_amount)
 
-    const fx_n = algosdk.bytesToBigInt(bid_uint8.slice(counter, counter + INT_LENGTH))
+    const fx_n = algosdk.bytesToBigInt(bid_bytes.slice(counter, counter + INT_LENGTH))
     counter += INT_LENGTH
     console.log("fx_n", fx_n)
-    const fx_d = algosdk.bytesToBigInt(bid_uint8.slice(counter, counter + INT_LENGTH))
+    const fx_d = algosdk.bytesToBigInt(bid_bytes.slice(counter, counter + INT_LENGTH))
     counter += INT_LENGTH
     console.log("fx_d", fx_d)
 
-    const chrony_importance = algosdk.bytesToBigInt(bid_uint8.slice(counter, counter + INT_LENGTH))
+    const chrony_importance = algosdk.bytesToBigInt(bid_bytes.slice(counter, counter + INT_LENGTH))
     counter += INT_LENGTH
     console.log("chrony_importance", chrony_importance)
 
-    const highroller_importance = algosdk.bytesToBigInt(bid_uint8.slice(counter, counter + INT_LENGTH))
+    const highroller_importance = algosdk.bytesToBigInt(bid_bytes.slice(counter, counter + INT_LENGTH))
     counter += INT_LENGTH
     console.log("highroller_importance", highroller_importance)
 
-    const subjective_importance = algosdk.bytesToBigInt(bid_uint8.slice(counter, counter + INT_LENGTH))
+    const subjective_importance = algosdk.bytesToBigInt(bid_bytes.slice(counter, counter + INT_LENGTH))
     counter += INT_LENGTH
     console.log("subjective_importance", subjective_importance)
 
-    const min = algosdk.bytesToBigInt(bid_uint8.slice(counter, counter + INT_LENGTH))
+    const min = algosdk.bytesToBigInt(bid_bytes.slice(counter, counter + INT_LENGTH))
     counter += INT_LENGTH
     console.log("min", min)
 
-    const encryption_public_key = new Uint8Array(bid_uint8.slice(counter, counter + ADDRESS_LENGTH))
+    const encryption_public_key = new Uint8Array(bid_bytes.slice(counter, counter + ADDRESS_LENGTH))
     counter += ADDRESS_LENGTH
 
-    const data = String.fromCharCode.apply(null, bid_uint8.slice(counter, bid_uint8.length))
+    const data = String.fromCharCode.apply(null, bid_bytes.slice(counter, bid_bytes.length))
     console.log("data", data)
 
     return {

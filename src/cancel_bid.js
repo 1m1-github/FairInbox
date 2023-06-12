@@ -1,7 +1,7 @@
 // goal app call --from $A --app-id $FAIRMARKET_APP --app-arg "str:cancel_bid" --app-arg $BID_ID --box $BID_ID --foreign-asset $CURRENCY_ID --fee 2000
 
 import algosdk from "algosdk"
-import { sign_and_send, FAIRMARKET_APP, user, bid_outs, algod, peraWallet, b64_to_uint8array, find_bid_by_id } from "./global"
+import { textEncoder, sign_and_send, FAIRMARKET_APP, user, bid_outs, algod, peraWallet, b64_to_uint8array, find_bid_by_id } from "./global"
 
 export function cancel(bid_id) {
     console.log("cancel", peraWallet.isConnected)
@@ -16,8 +16,7 @@ async function cancel_bid(A, bid_id, currency_id) {
     suggestedParams.fee = 3000
     suggestedParams.flatFee = true
 
-    const encoder = new TextEncoder()
-    const arg0 = encoder.encode("cancel_bid")
+    const arg0 = textEncoder.encode("cancel_bid")
     const arg1 = b64_to_uint8array(bid_id)
     const box = {appIndex: FAIRMARKET_APP, name: arg1}
 

@@ -1,23 +1,25 @@
-import { reconnectSession, handleConnectWalletClick, handleDisconnectWalletClick } from "./pera.js"
-import { bid_type, user, peraWallet } from "./global.js"
+import { handleConnectWalletClick, handleDisconnectWalletClick } from "./pera.js"
+import { user, peraWallet } from "./global.js"
 import { get_in_bids, get_out_bids } from "./get_bids.js"
 import { cancel } from "./cancel_bid.js"
 import { reply } from "./trade.js"
 import { send } from "./create_bid.js"
 import { get_params, update_params } from "./params.js"
+import { get_replies } from "./get_replies.js"
 
 export function init() {
 
     console.log("init, user", user)
 
     clear()
-
+    
     addAboutButton()
     addLoginButton()
-
+    
     if (user) {
         addComposeButton()
         addInOutboxButtons()
+        addRepliesButton()
         addParamsButton()
     }
 }
@@ -42,7 +44,7 @@ function addAboutButton() {
             "* minimalistic ~ WASM -> HTML + vanilla js",
             "* decentralized: ipfs + DLT (Algorand)",
             "* user driven design ~ submit your css to <a href=fairinbox@1m1.io>fairinbox@1m1.io</a> with a single .css file attached and the subject \"FAIRINBOX CSS\" ~ if your file passes the security check, it will be available for everyone to use ~ the default is css free",
-            "* privacy ~ encrypted msgs coming soon (if app is used)",
+            "* privacy ~ encrypted msgs coming soon (if there is demand)",
             "* community owned ~ value and governance will be fully run by the community",
             "* open source ~ <a href=https://github.com/1m1-github/FairInbox>github</a>",
         ]
@@ -293,4 +295,20 @@ function bid_to_html(bid, action_f) {
     const action = action_f(bid.id)
     bidDiv.append(action)
     return bidDiv
+}
+
+function addRepliesButton() {
+    const button = document.createElement("button")
+    document.body.appendChild(button)
+    button.innerHTML = "replies"
+    button.addEventListener("click", async (event) => {
+        console.log("replies", peraWallet.isConnected)
+        init()
+        if (!user) return
+        const replies = await get_replies()
+        for (const reply of replies) {
+            document.body.appendChild(reply)
+            document.body.appendChild(document.createElement("br"))
+        }
+    })
 }
