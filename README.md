@@ -20,7 +20,7 @@ A -> B
 
 ## 
 
-FairInbox uses FairMarket(https://github.com/1m1-github/FairMarket) as the DLT escrow and for the inbox ordering and FairFX (https://github.com/1m1-github/FairFX) as the DLT FX provider.
+FairInbox uses [FairMarket](https://github.com/1m1-github/FairMarket) as the DLT escrow and for the inbox ordering and [FairFX](https://github.com/1m1-github/FairFX) as the DLT FX provider.
 
 ## Innovation
 
@@ -45,13 +45,13 @@ This dapp is useful for mainstream and can bring real adoption.
 Possible path: meeting with Twitter exec -> meeting with Elon Musk -> add FairInbox to Twitter -> $ALGO 🚀
 
 ## Smart contracts
-Smart contracts were written using tealish and make use of modern AVM features like `box`es.
+Smart contracts were written using [tealish](https://tealish.tinyman.org/) and make use of modern AVM features like `box`es.
 
 Smart contracts make this dapp zero-credit-risk: send large value currency without fear.
 
 ## FairEnterprise
 
-FairInbox will exist as a FairEnterprise (https://github.com/1m1-github/FairEnterprise) to give trustless and fair access to value to the community
+FairInbox will exist as a [FairEnterprise](https://github.com/1m1-github/FairEnterprise) to give trustless and fair access to value to the community
 
 ## Frontend
 The frontend part of the dapp is minimalistic.
@@ -65,7 +65,7 @@ Serverless, trustless, permissionless.
 Whitelisted user provided css will be used for dapp.
 
 ## WASM
-Some parts needed for Algorand and encoding/decoding do not compile in TinyGo. Regular Go is too large. Rust or julia would be alternatives. tbd.
+Some parts needed for [Algorand](https://algorand.com/) and encoding/decoding do not compile in TinyGo. Regular Go is too large. Rust or julia would be alternatives. tbd.
 
 ## Build
 `npx webpack`
