@@ -42,7 +42,7 @@ We could solve Twitter's revenue problem by allowing dms to come with currency. 
 
 This dapp is useful for mainstream and can bring real adoption.
 
-Possible path: attention from MegaAce -> meeting with Twitter exec -> meeting with Elon Musk -> add FairInbox to Twitter -> $ALGO 🚀
+Possible path: meeting with Twitter exec -> meeting with Elon Musk -> add FairInbox to Twitter -> $ALGO 🚀
 
 ## Smart contracts
 Smart contracts were written using tealish and make use of modern AVM features like `box`es.
@@ -54,15 +54,15 @@ Smart contracts make this dapp zero-credit-risk: send large value currency witho
 FairInbox will exist as a FairEnterprise (https://github.com/1m1-github/FairEnterprise) to give trustless and fair access to value to the community
 
 ## Frontend
-The frontend part of the dapp is work-in-progress and will be available soon.
+The frontend part of the dapp is minimalistic.
 
 ## Web3
-The non smart contract code of the dapp (off DLT) will live on IPFS, as a bundle of wasm/js/html.
+The non smart contract code of the dapp (off DLT) is live on IPFS, as a bundle of wasm/js/html.
 
 Serverless, trustless, permissionless.
 
 ## User driven design
-Whitelisted user provided css will be used for dapp
+Whitelisted user provided css will be used for dapp.
 
 ## WASM
 Some parts needed for Algorand and encoding/decoding do not compile in TinyGo. Regular Go is too large. Rust or julia would be alternatives. tbd.
@@ -80,6 +80,8 @@ tests to run. no main.
 
 ## Security
 The off-DLT code contains vanilla js and html only (future: use WASM instead of js). No js frameworks or libs are used besides the DLT sdk, js-sha512 and the wallet connector sdk. This minimizes the risk of injecting malicious code.
+
+Smart contract are secured by asserting conditions early. That work was live streamed as well.
 
 ## Learned subjective internal ordering using LLMs
 As the theory asks, we choose the learning algorithm (information) as an LLM because our data consists of text. LLMs can understand, given enough examples, and with privacy (your own LLM) that a user can choose this forecasted strategy vs random, which gives a partial ordering overall
