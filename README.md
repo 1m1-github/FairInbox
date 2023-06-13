@@ -6,7 +6,7 @@ Each msg comes with currency attached
 
 You receive the currency if you reply
 
-https://fairinbox.io (not working yet...soon)
+https://fairinbox.io
 
 ## Use
 
