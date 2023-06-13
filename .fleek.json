@@ -1,6 +1,6 @@
 {
     "build": {
-        "command": "pwd && ls",
+        "command": "npm i && npx webpack",
         "publicDir": "dist"
     }
 }
