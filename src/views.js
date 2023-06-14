@@ -47,6 +47,7 @@ function addAboutButton() {
             "* user driven design ~ submit your css to <a href=fairinbox@1m1.io>fairinbox@1m1.io</a> with a single .css file attached and the subject \"FAIRINBOX CSS\" ~ if your file passes the security check, it will be available for everyone to use ~ the default is css free",
             "* privacy ~ encrypted msgs coming soon (if there is demand)",
             "* community owned ~ value and governance will be fully run by the community",
+            "* demo: https://youtu.be/qu6TXRGHSr8",
         ]
         for (const msg of msgs) {
             const d = document.createElement("div")

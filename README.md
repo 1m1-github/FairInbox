@@ -18,6 +18,8 @@ A -> B
 
 - B receives the currency by replying to the msg
 
+demo: https://youtu.be/qu6TXRGHSr8
+
 ## 
 
 FairInbox uses [FairMarket](https://github.com/1m1-github/FairMarket) as the DLT escrow and for the inbox ordering and [FairFX](https://github.com/1m1-github/FairFX) as the DLT FX provider.
@@ -98,6 +100,10 @@ API -> DLT
 views:
 WASM -> HTML
 WASM -> ???
+
+## Efficiency
+
+Since, currently, $ALGO is only used for gas, to keep the smart thin, cancel and reply cause the smart contract to send all left-over gas ($ALGO) to the caller.
 
 ## Stream
 Dev of the project was/is streamed best-effort: https://www.youtube.com/@1m1-yt/streams
