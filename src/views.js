@@ -48,7 +48,7 @@ function addAboutButton() {
             "* privacy ~ encrypted msgs coming soon (if there is demand)",
             "* community owned ~ value and governance will be fully run by the community",
             "* <a href=https://youtu.be/qu6TXRGHSr8>demo</a>",
-            "* prev commit: ce172639834b9f5f892db63162f379fc92aae8e6",
+            "* prev commit: d4890c29b8d7587abd8bea046ca431855d14aa66",
             "*** PERA CONNECT NOT WORKING IN MOBILE BROWSERS CURRENTLY ***",
 
         ]
