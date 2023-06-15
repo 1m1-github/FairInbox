@@ -48,6 +48,7 @@ function addAboutButton() {
             "* privacy ~ encrypted msgs coming soon (if there is demand)",
             "* community owned ~ value and governance will be fully run by the community",
             "* demo: https://youtu.be/qu6TXRGHSr8",
+            "* commit: 9e6c0d0796ab9b3e5371336ac9ff9a6c630ce909",
         ]
         for (const msg of msgs) {
             const d = document.createElement("div")
