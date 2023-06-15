@@ -47,8 +47,10 @@ function addAboutButton() {
             "* user driven design ~ submit your css to <a href=fairinbox@1m1.io>fairinbox@1m1.io</a> with a single .css file attached and the subject \"FAIRINBOX CSS\" ~ if your file passes the security check, it will be available for everyone to use ~ the default is css free",
             "* privacy ~ encrypted msgs coming soon (if there is demand)",
             "* community owned ~ value and governance will be fully run by the community",
-            "* demo: https://youtu.be/qu6TXRGHSr8",
-            "* commit: 9e6c0d0796ab9b3e5371336ac9ff9a6c630ce909",
+            "* <a href=https://youtu.be/qu6TXRGHSr8>demo</a>",
+            "* prev commit: ce172639834b9f5f892db63162f379fc92aae8e6",
+            "*** PERA CONNECT NOT WORKING IN MOBILE BROWSERS CURRENTLY ***",
+
         ]
         for (const msg of msgs) {
             const d = document.createElement("div")
