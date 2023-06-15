@@ -79,12 +79,13 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
     
     const suggestedParamsAppCall = { ...suggestedParams }
     suggestedParamsAppCall.flatFee = true
-    suggestedParamsAppCall.fee = 5000
+    suggestedParamsAppCall.fee = 6000
 
     const app_call_txn = algosdk.makeApplicationCallTxnFromObject({
         from: A,
         appIndex: FAIRMARKET_APP,
         foreignAssets: [currency_id],
+        accounts: [B],
         appArgs: [api_cmd_bytes, B_bytes, bid_id_bytes],
         boxes: [box0, box1],
         suggestedParams: suggestedParamsAppCall,
