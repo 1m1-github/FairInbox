@@ -7,9 +7,18 @@
 import algosdk from "algosdk"
 import { textEncoder, sign_and_send, user, algod, FAIRMARKET_ACCOUNT, FAIRMARKET_APP, SEND_ALGO_AMOUNT, FX_APP, FX_LP_ACCOUNT, FX_LP_APP, peraWallet, uint8ArrayToBase64, b64_to_uint8array } from "./global.js"
 import { sha512_256 } from "js-sha512"
+import { from_nickname_to_address } from "./NFDomains.js"
 
-export function send(B, currency_id, currency_amount, data) {
+export async function send(B, currency_id, currency_amount, data) {
     console.log("send", peraWallet.isConnected)
+
+    const nickname = B.toLowerCase()
+    if (nickname.endsWith(".algo")) {
+        B = await from_nickname_to_address(nickname)
+        console.log(`${nickname} -> ${B}`)
+        if (!B) throw ("not a good NFD nickname")
+    }
+
     return create_bid(user, B, currency_id, currency_amount, data)
 }
 
@@ -76,7 +85,7 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
     const bid_id_bytes = calc_bid_id(A, B, currency_id, currency_amount, data)
     const box0 = { appIndex: FAIRMARKET_APP, name: B_bytes }
     const box1 = { appIndex: FAIRMARKET_APP, name: bid_id_bytes }
-    
+
     const suggestedParamsAppCall = { ...suggestedParams }
     suggestedParamsAppCall.flatFee = true
     suggestedParamsAppCall.fee = 6000
