@@ -52,6 +52,8 @@ export const FX_LP_ACCOUNT = {
 //     21582981: "DNPVHOLSYCBDA6UAB3MREZN6W4MZZV4OL227B5ABABQTHCJFMLD345JPXE",
 // }
 
+export const NFD_URL = "https://api.nf.domains/nfd"
+// export NFD_URL = "https://api.testnet.nf.domains/nfd" // TESTNET
 
 export const SEND_ALGO_AMOUNT = 298900
 export const CREATE_PARAMS_ALGO_AMOUNT = 53700
