@@ -48,8 +48,7 @@ function addAboutButton() {
             "* privacy ~ encrypted msgs coming soon (if there is demand)",
             "* community owned ~ value and governance will be fully run by the community",
             "* <a href=https://youtu.be/qu6TXRGHSr8>demo</a>",
-            "* prev commit: d4890c29b8d7587abd8bea046ca431855d14aa66",
-            "*** PERA CONNECT NOT WORKING IN MOBILE BROWSERS CURRENTLY ***",
+            "* prev commit: a4601118f9e35d1aafdf52472101bf18a68be1a2",
 
         ]
         for (const msg of msgs) {
