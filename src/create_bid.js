@@ -5,7 +5,7 @@
 // BID_ID = hash($A$B$CURRENCY_ID$CURRENCY_AMOUNT$NOTE)
 
 import algosdk from "algosdk"
-import { textEncoder, sign_and_send, user, algod, FAIRMARKET_ACCOUNT, FAIRMARKET_APP, SEND_ALGO_AMOUNT, FX_APP, FX_LP_ACCOUNT, FX_LP_APP, peraWallet, uint8ArrayToBase64, b64_to_uint8array } from "./global.js"
+import { textEncoder, sign_and_send, user, algod, FAIRMARKET_ACCOUNT, FAIRMARKET_APP, SEND_ALGO_AMOUNT, FX_APP, FX_LP_ACCOUNT, FX_LP_APP, peraWallet, PROJECT_COIN } from "./global.js"
 import { sha512_256 } from "js-sha512"
 import { from_nickname_to_address } from "./NFDomains.js"
 
@@ -65,7 +65,7 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
         appIndex: FX_APP,
         foreignApps: [FX_LP_APP],
         foreignAssets: [currency_id],
-        suggestedParams: suggestedParams,
+        suggestedParams,
     }
     const FX_lp_account = FX_LP_ACCOUNT[currency_id]
     if (FX_lp_account) FX_txn_obj.accounts = [FX_lp_account]
@@ -76,9 +76,9 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
         from: A,
         to: FAIRMARKET_ACCOUNT,
         amount: SEND_ALGO_AMOUNT,
-        suggestedParams: suggestedParams,
+        suggestedParams,
     })
-    console.log("algo_send", algo_send_txn)
+    console.log("algo_send_txn", algo_send_txn)
 
     const api_cmd_bytes = textEncoder.encode("create_bid")
     const B_bytes = algosdk.decodeAddress(B).publicKey
@@ -88,18 +88,18 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
 
     const suggestedParamsAppCall = { ...suggestedParams }
     suggestedParamsAppCall.flatFee = true
-    suggestedParamsAppCall.fee = 6000
+    suggestedParamsAppCall.fee = 7000
 
     const app_call_txn = algosdk.makeApplicationCallTxnFromObject({
         from: A,
         appIndex: FAIRMARKET_APP,
-        foreignAssets: [currency_id],
+        foreignAssets: [currency_id, PROJECT_COIN],
         accounts: [B],
         appArgs: [api_cmd_bytes, B_bytes, bid_id_bytes],
         boxes: [box0, box1],
         suggestedParams: suggestedParamsAppCall,
     })
-    console.log("app_call", app_call_txn)
+    console.log("app_call_txn", app_call_txn)
 
     const note_bytes = calc_create_note(B, bid_id_bytes, data)
     console.log("note_bytes", note_bytes)
@@ -110,9 +110,19 @@ async function create_bid(A, B, currency_id, currency_amount, data) {
         assetIndex: currency_id,
         amount: currency_amount,
         note: note_bytes,
-        suggestedParams: suggestedParams,
+        suggestedParams,
     })
-    console.log("asset_send", asset_send_txn)
+    console.log("asset_send_txn", asset_send_txn)
 
-    return sign_and_send([FX_txn, algo_send_txn, app_call_txn, asset_send_txn], A)
+    const notify_note_bytes = textEncoder.encode("you have mail ~ check your FairInbox.io")
+    const notify_txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+        from: A,
+        to: B,
+        amount: 0,
+        note: notify_note_bytes,
+        suggestedParams,
+    })
+    console.log("notify_txn", notify_txn)
+
+    return sign_and_send([FX_txn, algo_send_txn, app_call_txn, asset_send_txn, notify_txn], A)
 }
