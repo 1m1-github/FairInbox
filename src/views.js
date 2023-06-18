@@ -49,7 +49,7 @@ function addAboutButton() {
             "* community owned ~ value and governance will be fully run by the community",
             "* <a href=https://youtu.be/qu6TXRGHSr8>demo</a>",
             "* prev commit: fa9accd372bb1f14e1c900d6d21374c2cb648ec7",
-            "* reward: get a project coin when sending or replying to a msg (if you are opted-in): ASA ID 662477403",
+            "* reward: auto-receive 1 project coin when sending or replying to a msg (if you are opted-in): ASA ID 662477403",
         ]
         for (const msg of msgs) {
             const d = document.createElement("div")
