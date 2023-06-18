@@ -40,7 +40,7 @@ function addAboutButton() {
         const msgs = [
             "* fairinbox",
             "* evolution of the inbox ~ attach coins to any msg ~ recipient gets coins if it replies",
-            "* open source ~ <a href=https://github.com/1m1-github/FairInbox>github</a>",
+            "* <a href=https://github.com/1m1-github/FairInbox>open source</a>",
             "* market driven order ~ <a href=https://github.com/1m1-github/FairMarket/blob/main/whitepaper/FairMarket.pdf>white paper</a>",
             "* minimalistic ~ WASM -> HTML + vanilla js",
             "* decentralized: ipfs + DLT (Algorand)",
@@ -48,8 +48,8 @@ function addAboutButton() {
             "* privacy ~ encrypted msgs coming soon (if there is demand)",
             "* community owned ~ value and governance will be fully run by the community",
             "* <a href=https://youtu.be/qu6TXRGHSr8>demo</a>",
-            "* prev commit: a4601118f9e35d1aafdf52472101bf18a68be1a2",
-
+            "* prev commit: ae226af46c6e285e8309ffb0d783c645448450cd",
+            "* reward: if you get a project coin when sending or replying a msg (if you are opted-in): ASA ID 662477403",
         ]
         for (const msg of msgs) {
             const d = document.createElement("div")

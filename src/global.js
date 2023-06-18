@@ -5,7 +5,9 @@ import { PeraWalletConnect } from "@perawallet/connect"
 export const textEncoder = new TextEncoder()
 export const textDecoder = new TextDecoder()
 
-// constants
+// constants MAINNET
+export const PROJECT_COIN = 662477403
+
 export const FAIRMARKET_ACCOUNT = "EMHKWV5XTWAEVM3WN2FFHGHO5AWQSAC6VUNK36PWYC4AK4ARMULCQY7IY4"
 export const FAIRMARKET_APP = 1123674460
 
@@ -41,7 +43,9 @@ export const FX_LP_ACCOUNT = {
     947923645: "7GYM7BFFGSE3WOGWF6M47VXORZKTP37FULMLPHWMTH2ICDQ6DPCXXUH6Q4",
 }
 
-// constants - TESTNET
+// constants TESTNET
+// export const PROJECT_COIN = 240148078 // TESTNET
+
 // export const FAIRMARKET_ACCOUNT = "LBO7BOTQ4TYJMXN6CLVAW27O7FLG2PNSLKPKZD2TV63J65E2777HHB7GRA"
 // export const FAIRMARKET_APP = 236003065
 

@@ -2,7 +2,7 @@
 // goal app call --from $B --app-id $FAIRMARKET_APP --app-account $A --foreign-asset $CURRENCY_ID --app-arg "str:trade" --app-arg $BID_ID --box $BID_ID --note $NOTE_2 --out $TXNS_DIR/trade_app_call.txn --fee 3000
 
 import algosdk from "algosdk"
-import { textEncoder, sign_and_send, user, bid_ins, algod, FAIRMARKET_APP, b64_to_uint8array, peraWallet, find_bid_by_id } from "./global"
+import { textEncoder, sign_and_send, user, bid_ins, algod, FAIRMARKET_APP, b64_to_uint8array, peraWallet, find_bid_by_id, PROJECT_COIN } from "./global"
 
 export function reply(bid_id, msg) {
     console.log("reply", peraWallet.isConnected, bid_id, bid_ins)
@@ -36,7 +36,7 @@ async function trade(A, B, bid_id, currency_id, data) {
         from: B,
         appIndex: FAIRMARKET_APP,
         accounts: [A],
-        foreignAssets: [currency_id],
+        foreignAssets: [currency_id, PROJECT_COIN],
         appArgs: [api_cmd_bytes, bid_id_bytes],
         boxes: [box0],
         note: note_bytes,
