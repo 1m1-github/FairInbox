@@ -1,7 +1,7 @@
 // fair ordering
 // https://github.com/1m1-github/FairMarket
 
-import { bid_type, shuffle } from "./global"
+import shuffle, { bid_type } from "./global"
 
 const TYPES = ["CHR", "HR", "LURK", "SUBJ"]
 

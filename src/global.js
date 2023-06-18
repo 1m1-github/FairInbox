@@ -124,11 +124,41 @@ export async function sign_and_send(txns, signer) {
     }
 }
 
-export function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        [array[i], array[j]] = [array[j], array[i]]
+// TODO weird stuff going on:
+// console.log("shuffle, array", array) shows elements in diff order than // console.log("shuffle, array[0]", array[0])
+export default function shuffle(array) {
+    // console.log("shuffle, array", array)
+    for (let i = 0; i < array.length; i++) {
+        // console.log("shuffle, i", i)
+        // console.log("shuffle, array[0]", array[0])
+        // console.log("shuffle, array[1]", array[1])
+        // console.log("shuffle, array[i]", array[i])
+        // console.log("shuffle, array[j]", array[j])
+        const j = Math.floor(Math.random() * array.length)
+        // console.log("shuffle, j", j)
+        // console.log("shuffle, array[0]", array[0])
+        // console.log("shuffle, array[1]", array[1])
+        // console.log("shuffle, array[i]", array[i])
+        // console.log("shuffle, array[j]", array[j])
+        if (i !== j) {
+            // console.log("shuffle, swap", i, j)
+            // console.log("shuffle, array[0]", array[0])
+            // console.log("shuffle, array[1]", array[1])
+            // console.log("shuffle, array[i]", array[i])
+            // console.log("shuffle, array[j]", array[j])
+            const tmp = array[i]
+            // console.log("shuffle, tmp", tmp)
+            // console.log("shuffle, array[0]", array[0])
+            // console.log("shuffle, array[1]", array[1])
+            // console.log("shuffle, array[i]", array[i])
+            // console.log("shuffle, array[j]", array[j])
+            array[i] = array[j]
+            // console.log("shuffle, array[i]", array[i])
+            array[j] = tmp
+            // console.log("shuffle, array[j]", array[j])
+        }
     }
+    // console.log("shuffle, after array", array)
 }
 
 export function find_bid_by_id(bids, bid_id) {
