@@ -48,7 +48,7 @@ function addAboutButton() {
             "* privacy ~ encrypted msgs coming soon (if there is demand)",
             "* community owned ~ value and governance will be fully run by the community",
             "* <a href=https://youtu.be/qu6TXRGHSr8>demo</a>",
-            "* prev commit: 1f56114fb73ce9fc340c5dfba2c55a8216230159",
+            "* prev commit: cac31eef19a6c2fc63335f02246a8c80e35a3b88",
             "* reward: auto-receive 1 project coin when sending or replying to a msg (if you are opted-in): ASA ID 1130719852",
         ]
         for (const msg of msgs) {

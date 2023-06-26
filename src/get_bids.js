@@ -58,8 +58,12 @@ export async function get_out_bids() {
 async function get_bids(transactions) {
     let bids = []
     for (const txn of transactions) {
-        const bid = await bid_from_txn(txn)
-        if (bid) bids.push(bid)
+        try { // for txns sent from A to FAIRMARKET_ACCOUNT without correct structure
+            const bid = await bid_from_txn(txn)
+            if (bid) bids.push(bid)
+        } catch {
+            console.error("bid_from_txn failed for txn", txn)
+        }
     }
     console.log(bids)
     return bids
