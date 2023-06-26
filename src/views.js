@@ -44,12 +44,12 @@ function addAboutButton() {
             "* market driven order ~ <a href=https://github.com/1m1-github/FairMarket/blob/main/whitepaper/FairMarket.pdf>white paper</a>",
             "* minimalistic ~ WASM -> HTML + vanilla js",
             "* decentralized: ipfs + DLT (Algorand)",
-            "* user driven design ~ submit your css to <a href=fairinbox@1m1.io>fairinbox@1m1.io</a> with a single .css file attached and the subject \"FAIRINBOX CSS\" ~ if your file passes the security check, it will be available for everyone to use ~ the default is css free",
+            "* user driven design ~ submit your css to <a href=email@fairinbox.io>email@fairinbox.io</a> with a single .css file attached and the subject \"FAIRINBOX CSS\" ~ if your file passes the security check, it will be available for everyone to use ~ the default is css free",
             "* privacy ~ encrypted msgs coming soon (if there is demand)",
             "* community owned ~ value and governance will be fully run by the community",
             "* <a href=https://youtu.be/qu6TXRGHSr8>demo</a>",
-            "* prev commit: fa9accd372bb1f14e1c900d6d21374c2cb648ec7",
-            "* reward: auto-receive 1 project coin when sending or replying to a msg (if you are opted-in): ASA ID 662477403",
+            "* prev commit: 1f56114fb73ce9fc340c5dfba2c55a8216230159",
+            "* reward: auto-receive 1 project coin when sending or replying to a msg (if you are opted-in): ASA ID 1130719852",
         ]
         for (const msg of msgs) {
             const d = document.createElement("div")

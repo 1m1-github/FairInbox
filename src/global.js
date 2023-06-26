@@ -6,7 +6,7 @@ export const textEncoder = new TextEncoder()
 export const textDecoder = new TextDecoder()
 
 // constants MAINNET
-export const PROJECT_COIN = 662477403
+export const PROJECT_COIN = 1130719852
 
 export const FAIRMARKET_ACCOUNT = "EMHKWV5XTWAEVM3WN2FFHGHO5AWQSAC6VUNK36PWYC4AK4ARMULCQY7IY4"
 export const FAIRMARKET_APP = 1123674460
