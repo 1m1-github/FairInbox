@@ -44,8 +44,6 @@ We could solve Twitter's revenue problem by allowing dms to come with currency. 
 
 This dapp is useful for mainstream and can bring real adoption.
 
-Possible path: meeting with Twitter exec -> meeting with Elon Musk -> add FairInbox to Twitter -> $ALGO 🚀
-
 ## Smart contracts
 Smart contracts were written using [tealish](https://tealish.tinyman.org/) and make use of modern AVM features like `box`es.
 
@@ -67,7 +65,7 @@ Serverless, trustless, permissionless.
 Whitelisted user provided css will be used for dapp.
 
 ## WASM
-Some parts needed for [Algorand](https://algorand.com/) and encoding/decoding do not compile in TinyGo. Regular Go is too large. Rust or julia would be alternatives. tbd.
+Use e.g. TinyGo to build dApp WASM. Depends on whether the DLT sdk can be compiled with TinyGo.
 
 ## Build
 `npx webpack`
@@ -100,10 +98,6 @@ API -> DLT
 views:
 WASM -> HTML
 WASM -> ???
-
-## Efficiency
-
-Since, currently, $ALGO is only used for gas, to keep the smart thin, cancel and reply cause the smart contract to send all left-over gas ($ALGO) to the caller.
 
 ## Stream
 Dev of the project was/is streamed best-effort: https://www.youtube.com/@1m1-yt/streams
