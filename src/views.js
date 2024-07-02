@@ -44,7 +44,7 @@ function addAboutButton() {
             "* market driven order ~ <a href=https://github.com/1m1-github/FairMarket/blob/main/whitepaper/FairMarket.pdf>white paper</a>",
             "* minimalistic ~ WASM -> HTML + vanilla js",
             "* decentralized: ipfs + DLT (Algorand)",
-            "* user driven design ~ submit your css to <a href=email@fairinbox.io>email@fairinbox.io</a> with a single .css file attached and the subject \"FAIRINBOX CSS\" ~ if your file passes the security check, it will be available for everyone to use ~ the default is css free",
+            "* user driven design ~ submit your css to <a href="mailto:fairinbox@1m1.io">fairinbox@1m1.io</a> with a single .css file attached and the subject \"FAIRINBOX CSS\" ~ if your file passes the security check, it will be available for everyone to use ~ the default is css free",
             "* privacy ~ encrypted msgs coming soon (if there is demand)",
             "* community owned ~ value and governance will be fully run by the community",
             "* <a href=https://youtu.be/qu6TXRGHSr8>demo</a>",
