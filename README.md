@@ -1,6 +1,6 @@
 # FairInbox
 
-Your market driven inbox
+Your social importance (or market) driven inbox
 
 Each msg comes with currency attached
 
@@ -22,11 +22,11 @@ demo: https://youtu.be/qu6TXRGHSr8
 
 ## 
 
-FairInbox uses [FairMarket](https://github.com/1m1-github/FairMarket) as the DLT escrow and for the inbox ordering and [FairFX](https://github.com/1m1-github/FairFX) as the DLT FX provider.
+FairInbox uses [FairMarket](https://github.com/1m1-github/FairMarket) as the trustless escrow and for the inbox ordering and [FairFX](https://github.com/1m1-github/FairFX) as the trustless FX provider.
 
 ## Innovation
 
-The default order of an inbox is chronological. In the 90's, Google created an ordering algorithm according to relevance to a search term.
+The default order of common inboxs nowadays is chronological. In the 90's, Google created an ordering algorithm according to relevance to a search term.
 FairMarket is an algorithm that orders msgs fairly according to market driven importance.
 
 ## Democratize information access
@@ -40,7 +40,9 @@ The ordering of such an inbox is according to social importance. Society/others 
 The order is not simply more-is-better. The FairMarket algorithm fairly interweaves those msgs that offer the minimum required, those that offer more and those that offer subjective value.
 
 ## Use cases
-We could solve Twitter's revenue problem by allowing dms to come with currency. Trivial to monetize by taking cuts of transactions. Immediately jump starts a new economy whether influencers replying to followers, advisers giving advice, friends respecting each others time.
+Evolve on the current email system.
+
+We could solve X's revenue problem by allowing dms to come with currency. Trivial to monetize by taking cuts of transactions. Immediately jump starts a new economy whether influencers replying to followers, advisers giving advice, friends respecting each others time.
 
 This dapp is useful for mainstream and can bring real adoption.
 
@@ -56,8 +58,14 @@ FairInbox will exist as a [FairEnterprise](https://github.com/1m1-github/FairEnt
 ## Frontend
 The frontend part of the dapp is minimalistic.
 
+## Trustless computing
+We use a mathematical proven trustless computer called Algorand that proves to the user the exact code that runs when the dapp is run. The trustlessness also allows for secure transfer of energy and information, without any need to trust any authority.
+Eventually, Algorand will connect via bridges to other trustless computers, giving users elsewhere access to it's FairInbox everywhere; alternatively, FairInbox can also be ported and made available on other trustless computers if that strategy is superior. Algorand would be considered the base barring unforeseen information.
+
+Note that the world trustless refers to systems that do not require the user to trust any operator, whilst the word trusted refers to the opposite, systems that require trust to the operator, as ironic as that sounds. 
+
 ## Web3
-The non smart contract code of the dapp (off DLT) is live on IPFS, as a bundle of wasm/js/html.
+The non smart contract code of the dapp (trusted computing) is live on IPFS, as a bundle of wasm/js/html, currently served by fleek.
 
 Serverless, trustless, permissionless.
 
@@ -65,7 +73,7 @@ Serverless, trustless, permissionless.
 Whitelisted user provided css will be used for dapp.
 
 ## WASM
-Use e.g. TinyGo to build dApp WASM. Depends on whether the DLT sdk can be compiled with TinyGo.
+todo: Use e.g. TinyGo to build dApp WASM. Depends on whether the trustless computer sdk can be compiled with TinyGo.
 
 ## Build
 `npx webpack`
@@ -79,12 +87,12 @@ tests to run. no main.
 (future) CI: push wasm+html+js to ipfs and change ipns
 
 ## Security
-The off-DLT code contains vanilla js and html only (future: use WASM instead of js). No js frameworks or libs are used besides the DLT sdk, js-sha512 and the wallet connector sdk. This minimizes the risk of injecting malicious code.
+The trusted computer code contains vanilla js and html only (future: use WASM instead of js). No js frameworks or libs are used besides the trustless computer sdk, js-sha512 and the wallet connector sdk. This minimizes the risk of injecting malicious code.
 
 Smart contract are secured by asserting conditions early. That work was live streamed as well.
 
 ## Learned subjective internal ordering using LLMs
-As the theory asks, we choose the learning algorithm (information) as an LLM because our data consists of text. LLMs can understand, given enough examples, and with privacy (your own LLM) that a user can choose this forecasted strategy vs random, which gives a partial ordering overall
+potential todo: As the theory asks, we choose the learning algorithm (information) as an LLM because our data consists of text. LLMs can understand, given enough examples, and with privacy (your own LLM) that a user can choose this forecasted strategy vs random, which gives a partial ordering overall
 
 ## Design
 golang -> WASM -> IPFS -> IPNS
@@ -93,7 +101,7 @@ user:
 IPNS -> WASM -> WASM runtime -> API -> ACTION -> VIEW
 
 action:
-API -> DLT
+API -> trustless computer
 
 views:
 WASM -> HTML
